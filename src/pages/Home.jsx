@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { createRegistration, verifyPayment } from "../api/registrationApi.js";
 
 function Home() {
   const [formData, setFormData] = useState({
@@ -20,6 +21,61 @@ function Home() {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [paymentModalData, setPaymentModalData] = useState(null);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [notification, setNotification] = useState(null);
+  const invoiceRef = useRef(null);
+
+  const genderMap = {
+    male: "Male",
+    female: "Female",
+    other: "Others",
+  };
+
+  const raceCategoryMap = {
+    KM_5: "5 KM",
+    KM_3: "3 KM",
+    KM_1_5: "1.5 KM",
+  };
+
+  const showNotification = (message, type = "error") => {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification(null);
+    }, 5000);
+  };
+
+  const handleClosePaymentModal = () => {
+    setIsPaymentModalOpen(false);
+    setPaymentModalData(null);
+  };
+
+  const handlePrintInvoice = () => {
+    if (!paymentModalData || !invoiceRef.current) return;
+
+    const printContents = invoiceRef.current.innerHTML;
+    const printWindow = window.open("", "_blank");
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Registration Invoice</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 24px; }
+            h2 { margin-bottom: 16px; }
+            .invoice-section { margin-bottom: 10px; }
+            .label { font-weight: 600; }
+            table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+            th, td { padding: 8px 6px; border-bottom: 1px solid #ddd; text-align: left; }
+          </style>
+        </head>
+        <body>${printContents}</body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -119,18 +175,47 @@ function Home() {
 
     setIsSubmitting(true);
 
+    // ============================================
+    // TEMPORARY: Razorpay integration disabled
+    // TODO: Remove this block after Razorpay is set up
+    // ============================================
+    const RAZORPAY_TEMPORARILY_DISABLED = true; // Set to false when Razorpay is ready
+    
+    if (RAZORPAY_TEMPORARILY_DISABLED) {
+      setIsSubmitting(false);
+      showNotification(
+        "Oops! Payment gateway is temporarily unavailable. Please try again after some time or contact admin at +91 6379058035",
+        "error"
+      );
+      // Scroll to contact section after a short delay
+      setTimeout(() => {
+        const contactSection = document.querySelector("#contact");
+        if (contactSection) {
+          const offsetTop = contactSection.offsetTop - 80;
+          window.scrollTo({
+            top: offsetTop,
+            behavior: "smooth"
+          });
+        }
+      }, 1500);
+      return;
+    }
+    // ============================================
+    // END OF TEMPORARY BLOCK
+    // ============================================
+
     try {
-      // Prepare registration data
+      // Prepare registration data (normalize values to match backend expectations)
       const registrationData = {
         name: formData.name,
         email: formData.email,
         mobileNumber: formData.mobileNumber,
-        gender: formData.gender,
+        gender: genderMap[formData.gender] || formData.gender,
         dateOfBirth: formData.dateOfBirth,
         age: parseInt(formData.age),
         presentAddress: formData.presentAddress,
         tshirtSize: formData.tshirtSize,
-        raceCategory: formData.raceCategory,
+        raceCategory: raceCategoryMap[formData.raceCategory] || formData.raceCategory,
         emergencyContactName: formData.emergencyContactName,
         emergencyContactMobile: formData.emergencyContactMobile,
         medicalHistory: formData.medicalHistory || "None",
@@ -138,47 +223,42 @@ function Home() {
         amount: 300
       };
 
-      // Create Razorpay order (you'll need to implement this endpoint on your backend)
-      // For now, we'll create order directly from frontend
-      const RAZORPAY_KEY_ID = 'rzp_test_S07AaxUVYdeeAz';
-      const amount = 300; // ₹300 in paise (300 * 100)
+      // 1. Create registration on backend (generates Razorpay order)
+      const registrationResponse = await createRegistration(registrationData);
 
-      // Open Razorpay Checkout
+      const RAZORPAY_KEY_ID = "rzp_test_S35m3ruk7s318p";
+      const amount = registrationResponse.amount || registrationData.amount;
+      const orderId =
+        registrationResponse.razorpayOrderId ||
+        registrationResponse.razorpay_order_id ||
+        registrationResponse.razorpayOrderID;
+
+      // 2. Open Razorpay Checkout
       const options = {
         key: RAZORPAY_KEY_ID,
-        amount: amount * 100, // Amount in paise
+        amount: amount * 100,
         currency: "INR",
         name: "Ayyapanthangal Marathon 2026",
         description: "Registration Fee",
+        order_id: orderId,
         prefill: {
           name: formData.name,
           email: formData.email,
-          contact: formData.mobileNumber
+          contact: formData.mobileNumber,
         },
         theme: {
-          color: "#FF6B35"
+          color: "#FF6B35",
         },
         handler: async function (response) {
-          setIsSubmitting(false);
-          
-          // Here you should verify the payment on your backend
-          // For now, we'll show success message
-          setSubmitSuccess(true);
-          
-          // You can send payment verification to your backend:
-          // await fetch('YOUR_BACKEND_URL/payment/verify', {
-          //   method: 'POST',
-          //   headers: { 'Content-Type': 'application/json' },
-          //   body: JSON.stringify({
-          //     razorpayOrderId: response.razorpay_order_id,
-          //     razorpayPaymentId: response.razorpay_payment_id,
-          //     razorpaySignature: response.razorpay_signature,
-          //     registrationData: registrationData
-          //   })
-          // });
+          try {
+            console.log("Razorpay response:", response);
+            const verifyResponse = await verifyPayment(response);
 
-          // Reset form after 5 seconds
-          setTimeout(() => {
+            setSubmitSuccess(true);
+            setPaymentModalData(verifyResponse);
+            setIsPaymentModalOpen(true);
+
+            // Reset form
             setFormData({
               name: "",
               email: "",
@@ -192,25 +272,41 @@ function Home() {
               raceCategory: "",
               emergencyContactName: "",
               emergencyContactMobile: "",
-              waiverConsent: false
+              waiverConsent: false,
             });
-            setSubmitSuccess(false);
-          }, 5000);
-        },
-        modal: {
-          ondismiss: function() {
+          } catch (err) {
+            console.error("Payment verification error:", err);
+            showNotification(
+              err?.message || "Payment verification failed. Please contact support.",
+              "error"
+            );
+          } finally {
             setIsSubmitting(false);
           }
-        }
+        },
+        modal: {
+          ondismiss: function () {
+            setIsSubmitting(false);
+          },
+        },
       };
 
       const rzp = new window.Razorpay(options);
       rzp.open();
-
     } catch (error) {
-      console.error('Payment error:', error);
+      console.error("Registration error:", error);
       setIsSubmitting(false);
-      alert('An error occurred. Please try again.');
+      
+      // Handle email already exists error
+      if (error?.message?.includes("email already exists") || error?.error === "REGISTRATION_EMAIL_EXISTS") {
+        setErrors(prev => ({
+          ...prev,
+          email: error.message || "A registration with this email already exists."
+        }));
+        showNotification(error.message || "A registration with this email already exists.", "error");
+      } else {
+        showNotification(error?.message || "An error occurred. Please try again.", "error");
+      }
     }
   };
   useEffect(() => {
@@ -276,6 +372,9 @@ function Home() {
       
       let currentSection = '';
       const scrollPosition = window.scrollY + 100; // Offset for better detection
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const isNearBottom = scrollPosition + windowHeight >= documentHeight - 50; // Near bottom of page
       
       sections.forEach((sectionId) => {
         const section = document.getElementById(sectionId);
@@ -283,7 +382,10 @@ function Home() {
           const sectionTop = section.offsetTop;
           const sectionHeight = section.offsetHeight;
           
-          if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+          // Special handling for contact section (footer) - if near bottom, make it active
+          if (sectionId === 'contact' && isNearBottom) {
+            currentSection = sectionId;
+          } else if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
             currentSection = sectionId;
           }
         }
@@ -1294,6 +1396,150 @@ function Home() {
       </div>
       {/* Registration Form End */}
 
+      {/* Terms & Conditions Start */}
+      <div className="container-fluid py-5 terms-section">
+        <div className="container-fluid px-3 px-md-4 px-lg-5">
+          <div className="row justify-content-center">
+            <div className="col-12 col-lg-10">
+              <div className="terms-card">
+                <h3 className="terms-title mb-3">Terms and Conditions</h3>
+                <ol className="terms-list">
+                  <li>
+                    Please choose the event carefully, confirmed registrations are non-refundable. You will have an option to change the Event
+                    Category after registration. The minimum age eligibility for various events is as follows:
+                    <ul className="mt-2">
+                      <li>10 km: 16 years (born on or before 4th January 2010)</li>
+                      <li>21 km: 18 years (born on or before 4th January 2008)</li>
+                      <li>32 km: 18 years (born on or before 4th January 2008)</li>
+                      <li>42 km: 18 years (born on or before 4th January 2008)</li>
+                    </ul>
+                  </li>
+                  <li>Proof of age shall be submitted by all participants while collecting their bib.</li>
+                  <li>
+                    Please provide us with a secure email address that you can access regularly, as email communication will be our primary means
+                    of contacting you during the run up to the Event. Users of email services that offer filtering / blocking of messages from
+                    unknown email address should add <strong>info@thechennaimarathon.com</strong> to their address list.
+                  </li>
+                  <li>
+                    The organizers will contact the runners by email / SMS / WhatsApp. Any notice sent to the email address registered with the
+                    organizers shall be deemed as received by the runners.
+                  </li>
+                  <li>
+                    By registering for any of the events, you acknowledge and accept that you are aware that long distance running is an extreme
+                    sport and can be injurious to body and health. You take full responsibility for participating in the Ayyapanthangal Marathon
+                    2026 and do not hold the organizers or other associated persons / entities responsible for any injury or accident.
+                  </li>
+                  <li>
+                    Irrespective of your age and fitness status, it is recommended that you consult your physician and undergo complete medical
+                    examination to assess your suitability to participate in the Event.
+                  </li>
+                  <li>
+                    You agree that you are aware of all risks associated with participating in this Event including, but not limited to, falls,
+                    contact with other participants, the effects of the weather (including high heat or humidity), traffic and the condition of
+                    the road, arson or terrorist threats and all other risks associated with a public event.
+                  </li>
+                  <li>
+                    You agree that the organizing committee and associated companies or entities that organize the Event shall not be liable for
+                    any loss, damage, illness or injury that might occur as a result of your participation in the Event.
+                  </li>
+                  <li>
+                    You agree to abide by the instructions provided by the organizers from time to time in the best interest of your health and
+                    Event safety.
+                  </li>
+                  <li>
+                    You agree to dress appropriately for the Event. Inappropriate clothing includes, but is not limited to, clothing or gear
+                    dangerous to other participants, unpleasant to other participants, or carrying messages containing political or religious
+                    propaganda and advertising an individual name or organization that the Event organizer does not acknowledge.
+                  </li>
+                  <li>
+                    You agree that you will not use the Event to promote or communicate by any means political or religious propaganda or
+                    advertising an individual name or organization that the Event organizer does not acknowledge.
+                  </li>
+                  <li>
+                    You also agree to stop running if instructed by the Event organizers or the medical staff or by the aid station volunteers.
+                  </li>
+                  <li>
+                    Copyright of images, photographs, articles, race records, and location information covering the Event, and their usage right
+                    for TV broadcasting, newspapers, magazines and the Internet, belongs to the Event organizer. This includes but is not limited
+                    to names and other personal information such as age and address of participants mentioned in coverage of the Event. You
+                    confirm that your name and media recordings taken during your participation may be used to publicize the Event at any time by
+                    the organizers.
+                  </li>
+                  <li>
+                    You acknowledge and agree that your personal information can be stored and used by the organizers or any other company in
+                    connection with the organization, promotion and administration of the Event and for the compilation of statistical
+                    information.
+                  </li>
+                  <li>
+                    You confirm that, in the event of adverse weather conditions, major incidents or threats on the day, the organizers reserve
+                    the right to stop / cancel / postpone the Event. You understand that confirmed registrations and merchandise orders are
+                    non‑refundable, non‑transferable and cannot be modified.
+                  </li>
+                  <li>
+                    The organizers reserve the right to reject any application without providing reasons. Any amount collected from rejected
+                    applications alone will be refunded in full (excluding bank charges wherever applicable).
+                  </li>
+                  <li>
+                    The Event team will communicate the cut‑off and Event closure time before race day. Participants will not be allowed to stay
+                    on the course beyond the stipulated cut‑off time for an event.
+                  </li>
+                  <li>
+                    It is mandatory for confirmed participants to visit the Expo to collect their running bib. If a participant is unable to
+                    attend the Expo due to unavoidable reasons, an authorized representative may collect the running bib on their behalf.
+                    Detailed instructions in this regard will be sent by email in due course to all participants.
+                  </li>
+                  <li>
+                    We will be sending regular updates to your registered mobile number as well. This should not be treated as spam and you shall
+                    not take any action against our bulk SMS / WhatsApp / email service provider and / or the organizers and partners.
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Terms & Conditions End */}
+
+      {/* Payment Confirmation Modal */}
+      {isPaymentModalOpen && paymentModalData && (
+        <div className="payment-modal-backdrop">
+          <div className="payment-modal" ref={invoiceRef}>
+            <h4 className="payment-modal-title">Registration Confirmation</h4>
+            <p className="payment-modal-message">
+              {paymentModalData.message || "Payment verified and registration confirmed."}
+            </p>
+            <div className="payment-modal-section">
+              <div><strong>Reference Number:</strong> {paymentModalData.referenceNumber}</div>
+              {paymentModalData.userDetails && (
+                <>
+                  <div><strong>Name:</strong> {paymentModalData.userDetails.name}</div>
+                  <div><strong>Email:</strong> {paymentModalData.userDetails.email}</div>
+                  <div><strong>Mobile:</strong> {paymentModalData.userDetails.mobileNumber}</div>
+                  <div><strong>Category:</strong> {paymentModalData.userDetails.category}</div>
+                  <div><strong>Amount:</strong> ₹{paymentModalData.userDetails.amount}</div>
+                </>
+              )}
+            </div>
+            <div className="payment-modal-actions">
+              <button
+                type="button"
+                className="btn btn-primary me-2"
+                onClick={handlePrintInvoice}
+              >
+                Print Invoice
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={handleClosePaymentModal}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Footer Start */}
       <div className="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s" id="contact">
         <div className="container-fluid px-4 px-lg-5 py-5">
@@ -1402,6 +1648,24 @@ function Home() {
       >
         <i className="bi bi-arrow-up" />
       </a>
+
+      {/* Notification Toast */}
+      {notification && (
+        <div className={`notification-toast notification-toast-${notification.type}`}>
+          <div className="notification-content">
+            <span className="notification-icon">
+              {notification.type === "error" ? "⚠️" : notification.type === "success" ? "✓" : "ℹ️"}
+            </span>
+            <span className="notification-message">{notification.message}</span>
+            <button 
+              className="notification-close"
+              onClick={() => setNotification(null)}
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

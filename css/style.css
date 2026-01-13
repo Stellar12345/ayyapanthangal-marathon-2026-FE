@@ -197,7 +197,7 @@ html, body {
 
 /*** Hero Banner - Clean & Minimal ***/
 .hero-banner {
-    background: url(../img/maraton.jpeg);
+    background: url(../img/maraton_1.jpg);
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -214,7 +214,8 @@ html, body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(215, 219, 227, 0.374) 0%, rgba(56, 67, 93, 0.772) 100%);
+    background: linear-gradient(135deg, rgba(133, 119, 97, 0.479) 0%,
+     rgba(130, 113, 52, 0.45) 100%);
     z-index: 1;
 }
 
@@ -249,9 +250,9 @@ html, body {
     font-family: 'Nunito', sans-serif;
     font-weight: 800;
     font-size: clamp(1.1rem, 2.5vw, 1.4rem);
-    color: #FEA116;
+    color: #e8291b;
     margin-bottom: 2rem;
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9), 0 0 15px rgba(254, 161, 22, 0.6);
+    text-shadow: 2px 2px 8px rgba(179, 163, 163, 0.9), 0 0 15px rgba(128, 118, 103, 0.6);
     letter-spacing: 0.5px;
     -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.3);
 }
@@ -271,9 +272,9 @@ html, body {
 }
 
 .hero-date-location i {
-    color: #FEA116;
+    color: #FFFFFF;
     opacity: 1;
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9), 0 0 15px rgba(254, 161, 22, 0.8);
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);
     font-size: 1.1em;
 }
 
@@ -285,10 +286,10 @@ html, body {
 
 .hero-separator {
     margin: 0 0.75rem;
-    color: #FEA116;
-    opacity: 1;
+    color: #FFFFFF;
+    opacity: 0.8;
     font-weight: 800;
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9), 0 0 12px rgba(254, 161, 22, 0.7);
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);
 }
 
 /* Prize Money & Registration Fee */
@@ -304,66 +305,64 @@ html, body {
 .hero-fee-badge {
     display: flex;
     align-items: center;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(255, 248, 235, 0.95);
     backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.5);
     border-radius: 50px;
     padding: 0.875rem 1.75rem;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .hero-prize-badge {
-    border-color: rgba(254, 161, 22, 0.5);
+    border-color: rgba(232, 41, 27, 0.3);
 }
 
 .hero-prize-badge:hover,
 .hero-fee-badge:hover {
     transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
 .hero-prize-badge:hover {
-    border-color: var(--primary);
-    background: rgba(254, 161, 22, 0.2);
+    border-color: rgba(232, 41, 27, 0.5);
+    background: rgba(255, 248, 235, 1);
 }
 
 .hero-fee-badge:hover {
-    border-color: rgba(255, 255, 255, 0.6);
-    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 248, 235, 1);
 }
 
 .hero-prize-badge i,
 .hero-fee-badge i {
-    color: var(--primary);
+    color: #e8291b;
     font-size: 1.25rem;
     margin-right: 0.75rem;
-    text-shadow: 0 0 10px rgba(254, 161, 22, 0.6);
 }
 
 .hero-prize-label,
 .hero-fee-label {
-    color: #FFFFFF;
+    color: #333333;
     font-weight: 600;
     font-size: clamp(0.85rem, 1.8vw, 0.95rem);
     margin-right: 0.75rem;
-    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
-.hero-prize-amount,
-.hero-fee-amount {
-    color: var(--primary);
+.hero-prize-amount {
+    color: #e8291b;
     font-weight: 800;
     font-size: clamp(1rem, 2.2vw, 1.2rem);
-    text-shadow: 0 0 15px rgba(254, 161, 22, 0.8), 2px 2px 6px rgba(0, 0, 0, 0.9);
     letter-spacing: 0.5px;
 }
 
 .hero-fee-amount {
-    color: #FFFFFF;
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);
+    color: #333333;
+    font-weight: 800;
+    font-size: clamp(1rem, 2.2vw, 1.2rem);
+    letter-spacing: 0.5px;
 }
 
 /* Distance Selector Pills - Bottom Right */
@@ -514,6 +513,54 @@ html, body {
     }
 }
 
+
+/********** Payment Confirmation Modal **********/
+.payment-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1050;
+}
+
+.payment-modal {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 480px;
+    width: 90%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.payment-modal-title {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.payment-modal-message {
+    margin-bottom: 1rem;
+}
+
+.payment-modal-section {
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+}
+
+.payment-modal-section div {
+    margin-bottom: 0.25rem;
+}
+
+.payment-modal-actions {
+    text-align: right;
+}
+
+.payment-modal-actions .btn {
+    min-width: 120px;
+}
 @media (max-width: 576px) {
     .hero-banner {
         padding: 60px 0 40px;
@@ -760,6 +807,151 @@ html, body {
     margin-top: 1rem;
     text-align: center;
     border: 1px solid rgba(254, 161, 22, 0.2);
+}
+
+
+/********** Admin Login **********/
+.admin-login-page {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(rgba(15, 23, 43, 0.85), rgba(15, 23, 43, 0.9)), url(../img/maraton_1.jpg);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 80px 0;
+}
+
+.admin-login-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(15, 23, 43, 0.6), rgba(254, 161, 22, 0.2));
+}
+
+.admin-login-container {
+    position: relative;
+    z-index: 2;
+}
+
+.admin-login-card {
+    background: rgba(15, 23, 43, 0.9);
+    border-radius: 16px;
+    padding: 2.5rem 2.25rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #FFFFFF;
+}
+
+.admin-login-title {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+    color: #FFFFFF;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+}
+
+.admin-login-subtitle {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 1.75rem;
+}
+
+.admin-login-card .form-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.admin-login-card .form-control {
+    background-color: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: #FFFFFF;
+}
+
+.admin-login-card .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.admin-login-card .form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(254, 161, 22, 0.25);
+    border-color: rgba(254, 161, 22, 0.7);
+}
+
+.admin-login-card .btn-primary {
+    background: var(--primary);
+    border: none;
+    border-radius: 50px;
+    padding: 0.6rem 1.5rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.admin-login-card .btn-primary:hover {
+    background: #e09012;
+}
+
+@media (max-width: 576px) {
+    .admin-login-card {
+        padding: 2rem 1.5rem;
+    }
+}
+
+
+/********** Terms & Conditions **********/
+.terms-section {
+    background-color: #f8f9fb;
+}
+
+.terms-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 2rem 1.75rem;
+    box-shadow: 0 8px 24px rgba(15, 23, 43, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.terms-title {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1.75rem;
+    color: var(--dark);
+}
+
+.terms-list {
+    padding-left: 1.25rem;
+    margin-bottom: 0;
+    font-size: 0.95rem;
+    color: #444;
+    line-height: 1.7;
+}
+
+.terms-list > li {
+    margin-bottom: 0.75rem;
+}
+
+.terms-list ul {
+    margin-top: 0.35rem;
+}
+
+.terms-list ul li {
+    list-style: disc;
+}
+
+@media (max-width: 768px) {
+    .terms-card {
+        padding: 1.5rem 1.25rem;
+    }
+
+    .terms-title {
+        font-size: 1.5rem;
+    }
+
+    .terms-list {
+        font-size: 0.9rem;
+    }
 }
 
 @media (max-width: 991.98px) {
@@ -1033,4 +1225,226 @@ html, body {
     margin-right: 0;
     padding-right: 0;
     border-right: none;
+}
+
+/* Admin Dashboard Styles */
+.admin-dashboard-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2rem 0;
+}
+
+.admin-dashboard-header {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.admin-dashboard-table {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.admin-dashboard-table .table {
+    margin-bottom: 0;
+}
+
+.admin-dashboard-table .table thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.admin-dashboard-table .table thead th {
+    border: none;
+    padding: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.admin-dashboard-table .table tbody tr {
+    transition: all 0.3s ease;
+}
+
+.admin-dashboard-table .table tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.admin-dashboard-table .table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.admin-dashboard-table .badge {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.admin-dashboard-table .btn-sm {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+/* Admin Detail Modal */
+.modal-content {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    padding: 1.5rem;
+}
+
+.modal-header .modal-title {
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+.modal-header .btn-close {
+    filter: invert(1);
+    opacity: 0.9;
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.modal-body .row {
+    margin-bottom: 0.5rem;
+}
+
+.modal-body strong {
+    color: #667eea;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.modal-footer {
+    border-top: 1px solid #e9ecef;
+    padding: 1rem 2rem;
+}
+
+/* Responsive adjustments for admin dashboard */
+@media (max-width: 768px) {
+    .admin-dashboard-table {
+        overflow-x: auto;
+    }
+    
+    .admin-dashboard-table .table {
+        min-width: 800px;
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+    }
+}
+
+/* Notification Toast Styles */
+.notification-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    min-width: 300px;
+    max-width: 500px;
+    animation: slideInRight 0.3s ease-out;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.notification-toast-error {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    color: white;
+}
+
+.notification-toast-success {
+    background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
+    color: white;
+}
+
+.notification-toast-info {
+    background: linear-gradient(135deg, #4dabf7 0%, #339af0 100%);
+    color: white;
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    gap: 0.75rem;
+}
+
+.notification-icon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.notification-message {
+    flex: 1;
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+    line-height: 1;
+}
+
+.notification-close:hover {
+    opacity: 1;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 576px) {
+    .notification-toast {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        min-width: auto;
+        max-width: none;
+    }
 }
