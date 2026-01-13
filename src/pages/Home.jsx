@@ -1624,6 +1624,19 @@ function Home() {
                   Ayyapanthangal Marathon 2026
                 </a>
                 , All Right Reserved.
+                <br />
+                <small className="text-muted">
+                  Website designed & developed by{" "}
+                  <a 
+                    href="https://stellarsolutions.org" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-primary"
+                    style={{ textDecoration: "none" }}
+                  >
+                    Stellar Solutions
+                  </a>
+                </small>
               </div>
               <div className="col-md-6 text-center text-md-end">
                 <div className="footer-menu">
