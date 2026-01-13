@@ -372,7 +372,7 @@ function Home() {
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark px-4 px-lg-5 py-3 py-lg-0">
           <a href="#home" className="navbar-brand p-0 d-flex align-items-center">
             <img 
-              src="/img/logo.png" 
+              src="/img/logo_1.png" 
               alt="Ayyapanthangal Marathon 2026 Logo" 
               style={{ height: "60px", width: "auto", marginRight: "15px" }}
               className="logo-img"
@@ -415,68 +415,56 @@ function Home() {
           </div>
         </nav>
 
-        <div className="container-fluid py-3 py-md-4 py-lg-5 bg-dark hero-header mb-5" id="home" style={{ position: "relative", minHeight: "500px" }}>
-          <div 
-            className="position-absolute top-0 start-0 w-100 h-100"
-            style={{
-              backgroundColor: "rgba(0, 0, 0, 0.4)",
-              zIndex: 1
-            }}
-          ></div>
-          <div className="container-fluid px-3 px-md-4 px-lg-5 my-3 my-md-4 my-lg-5 py-3 py-md-4 py-lg-5" style={{ position: "relative", zIndex: 2 }}>
-            <div className="row align-items-center g-3 g-md-4 g-lg-5">
-              <div className="col-12 col-lg-6 text-center text-lg-start">
-                <h1 className="display-4 display-md-3 text-white animated slideInLeft fw-bold mb-2 mb-md-3" style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)", letterSpacing: "1px", fontSize: "clamp(1.5rem, 4vw, 3rem)" }}>
-                  AYYAPANTHANGAL MARATHON 2026
-                </h1>
-                <p className="text-white animated slideInLeft mb-2 mb-md-3 fw-bold" style={{ textShadow: "1px 1px 3px rgba(0,0,0,0.8)", fontSize: "clamp(0.9rem, 2vw, 1.1rem)" }}>
-                  <a href="#register" className="badge bg-danger me-2 text-decoration-none" style={{ cursor: "pointer", fontSize: "clamp(0.8rem, 2vw, 1rem)" }}>REGISTER NOW!</a>
-                  REGISTRATION FEE: ₹300
-                </p>
-                <p className="text-warning animated slideInLeft mb-2 mb-md-3 lead fw-semibold" style={{ textShadow: "1px 1px 3px rgba(0,0,0,0.8)", fontSize: "clamp(1rem, 2.5vw, 1.3rem)" }}>
-                  Run for Health • Run for Discipline • Run for a Cause
-                </p>
-                <p className="text-white animated slideInLeft mb-3 mb-md-4" style={{ textShadow: "1px 1px 3px rgba(0,0,0,0.8)", fontSize: "clamp(0.85rem, 2vw, 1.1rem)" }}>
-                  <i className="fa fa-calendar-alt me-2" />
-                  <span className="d-block d-md-inline">SUNDAY, 15 FEBRUARY 2026</span>
-                  <span className="d-none d-md-inline"> | </span>
-                  <span className="d-block d-md-inline">AYYAPANTHANGAL</span>
-                </p>
-                <div className="d-flex flex-wrap gap-2 gap-md-3 mb-3 mb-md-4 animated slideInLeft justify-content-center justify-content-lg-start">
-                  <span className="badge bg-danger px-3 px-md-4 py-2" style={{ fontSize: "clamp(0.9rem, 2vw, 1.2rem)" }}>1.5K</span>
-                  <span className="badge bg-primary px-3 px-md-4 py-2" style={{ fontSize: "clamp(0.9rem, 2vw, 1.2rem)" }}>3K</span>
-                  <span className="badge bg-warning text-dark px-3 px-md-4 py-2" style={{ fontSize: "clamp(0.9rem, 2vw, 1.2rem)" }}>5K</span>
+        <div className="container-fluid hero-banner mb-5" id="home">
+          <div className="hero-overlay-dark"></div>
+          <div className="container-fluid px-3 px-md-4 px-lg-5 hero-content-wrapper">
+            <div className="hero-content">
+              {/* Main Title */}
+              <h1 className="hero-main-title">
+                AYYAPANTHANGAL MARATHON 2026
+              </h1>
+              
+              {/* Tagline */}
+              <p className="hero-tagline-text">
+                Run for Health • Run for Discipline • Run for a Cause
+              </p>
+              
+              {/* Date & Location */}
+              <div className="hero-date-location">
+                <i className="fa fa-calendar-alt me-2" />
+                <span>15 February 2026</span>
+                <span className="hero-separator">•</span>
+                <i className="fa fa-map-marker-alt me-2" />
+                <span>Ayyapanthangal</span>
+              </div>
+              
+              {/* Prize Money & Registration Fee */}
+              <div className="hero-prize-fee">
+                <div className="hero-prize-badge">
+                  <i className="fa fa-trophy me-2" />
+                  <span className="hero-prize-label">Win Cash Prizes</span>
+                  <span className="hero-prize-amount">Up to ₹25,000</span>
+                </div>
+                <div className="hero-fee-badge">
+                  <i className="fa fa-rupee-sign me-2" />
+                  <span className="hero-fee-label">Registration Fee</span>
+                  <span className="hero-fee-amount">₹300</span>
                 </div>
               </div>
-              <div className="col-12 col-lg-6 text-center text-lg-end mt-4 mt-lg-0">
-                <div className="mb-3 mb-md-4 animated slideInRight">
-                  <p className="text-white mb-2" style={{ textShadow: "1px 1px 3px rgba(0,0,0,0.8)", fontSize: "clamp(0.85rem, 2vw, 1rem)" }}>
-                    <i className="fa fa-tshirt me-2" />
-                    T-SHIRT • <i className="fa fa-medal me-2" />
-                    MEDAL • <i className="fa fa-certificate me-2" />
-                    CERTIFICATE FOR ALL FINISHERS
-                  </p>
-                  <p className="text-warning fw-bold mb-2" style={{ textShadow: "1px 1px 3px rgba(0,0,0,0.8)", fontSize: "clamp(1rem, 2.5vw, 1.2rem)" }}>
-                    <i className="fa fa-trophy me-2" />
-                    WIN CASH PRIZES UP TO ₹25,000!
-                  </p>
-                </div>
-                <div className="mb-3 mb-md-4 animated slideInRight">
-                  <p className="badge bg-danger px-2 px-md-3 py-2 mb-2" style={{ fontSize: "clamp(0.85rem, 2vw, 1rem)" }}>LIMITED SLOTS!</p>
-                  <p className="badge bg-primary px-2 px-md-3 py-2 mb-2 mb-md-3" style={{ fontSize: "clamp(0.85rem, 2vw, 1rem)" }}>JOIN THE RUN FOR FITNESS & FUN!</p>
-                  <ul className="list-unstyled text-white text-center text-lg-end" style={{ textShadow: "1px 1px 3px rgba(0,0,0,0.8)", fontSize: "clamp(0.85rem, 2vw, 1rem)" }}>
-                    <li className="mb-2"><i className="fa fa-check-circle text-danger me-2" />Promote Health & Fitness</li>
-                    <li className="mb-2"><i className="fa fa-check-circle text-danger me-2" />Challenge Yourself</li>
-                    <li className="mb-2"><i className="fa fa-check-circle text-danger me-2" />Be a Part of the Community</li>
-                  </ul>
-                </div>
-                <a
-                  href="#register"
-                  className="btn btn-primary btn-lg py-2 py-md-3 px-4 px-md-5 animated slideInRight"
-                  style={{ fontSize: "clamp(1rem, 2.5vw, 1.2rem)", fontWeight: "700" }}
-                >
-                  REGISTER NOW!
-                </a>
+              
+              {/* Primary CTA Button */}
+              <a href="#register" className="hero-register-btn">
+                REGISTER NOW
+              </a>
+            </div>
+            
+            {/* Distance Selector Pills - Bottom Right */}
+            <div className="hero-distances">
+              <h4 className="hero-distances-heading">Race Categories</h4>
+              <div className="hero-distances-pills">
+                <button className="hero-distance-pill">1.5 KM</button>
+                <button className="hero-distance-pill">3 KM</button>
+                <button className="hero-distance-pill">5 KM</button>
               </div>
             </div>
           </div>
@@ -716,73 +704,106 @@ function Home() {
           </div>
 
           {/* Category-wise Sponsorship */}
-          <div className="row g-4 mb-5">
-            <div className="col-12">
-              <h3 className="mb-4">Category-Wise Sponsorship Options</h3>
+          <div className="sponsorship-categories-section mb-5">
+            <div className="text-center mb-5">
+              <h3 className="section-title-sponsor mb-3">Category-Wise Sponsorship Options</h3>
+              <p className="text-muted">Choose the sponsorship category that best fits your brand</p>
             </div>
-            <div className="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-              <div className="service-item rounded pt-3">
-                <div className="p-4">
-                  <i className="fa fa-3x fa-tshirt text-primary mb-4" />
-                  <h5>T-Shirt Sponsor</h5>
-                  <p className="mb-2">Sponsor provides event T-shirts</p>
-                  <p className="mb-2">Logo prominently displayed on all runner T-shirts</p>
-                  <small className="text-muted">Ideal for: Local Business conglomerate, Apparel brands, printing companies, sports stores</small>
+            <div className="row g-4">
+              <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                <div className="sponsorship-category-card h-100">
+                  <div className="sponsorship-icon-wrapper">
+                    <i className="fa fa-tshirt sponsorship-icon" />
+                  </div>
+                  <div className="sponsorship-card-content">
+                    <h4 className="sponsorship-card-title">T-Shirt Sponsor</h4>
+                    <ul className="sponsorship-benefits-list">
+                      <li>Sponsor provides event T-shirts</li>
+                      <li>Logo prominently displayed on all runner T-shirts</li>
+                    </ul>
+                    <div className="sponsorship-ideal-for">
+                      <strong>Ideal for:</strong> Local Business conglomerate, Apparel brands, printing companies, sports stores
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-              <div className="service-item rounded pt-3">
-                <div className="p-4">
-                  <i className="fa fa-3x fa-tint text-primary mb-4" />
-                  <h5>Water / Hydration Sponsor</h5>
-                  <p className="mb-2">Branding at water stations</p>
-                  <p className="mb-2">Logo on water bottles / cups</p>
-                  <p className="mb-2">Announcements during the event</p>
-                  <small className="text-muted">Ideal for: Drinking water brands, beverage companies, RO suppliers</small>
+              <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.2s">
+                <div className="sponsorship-category-card h-100">
+                  <div className="sponsorship-icon-wrapper">
+                    <i className="fa fa-tint sponsorship-icon" />
+                  </div>
+                  <div className="sponsorship-card-content">
+                    <h4 className="sponsorship-card-title">Water / Hydration Sponsor</h4>
+                    <ul className="sponsorship-benefits-list">
+                      <li>Branding at water stations</li>
+                      <li>Logo on water bottles / cups</li>
+                      <li>Announcements during the event</li>
+                    </ul>
+                    <div className="sponsorship-ideal-for">
+                      <strong>Ideal for:</strong> Drinking water brands, beverage companies, RO suppliers
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
-              <div className="service-item rounded pt-3">
-                <div className="p-4">
-                  <i className="fa fa-3x fa-trophy text-primary mb-4" />
-                  <h5>Prize Money Sponsor</h5>
-                  <p className="mb-2">Sponsor supports winner cash prizes</p>
-                  <p className="mb-2">"Prizes sponsored by…" recognition</p>
-                  <p className="mb-2">On-stage visibility during prize distribution</p>
+              <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+                <div className="sponsorship-category-card h-100">
+                  <div className="sponsorship-icon-wrapper">
+                    <i className="fa fa-trophy sponsorship-icon" />
+                  </div>
+                  <div className="sponsorship-card-content">
+                    <h4 className="sponsorship-card-title">Prize Money Sponsor</h4>
+                    <ul className="sponsorship-benefits-list">
+                      <li>Sponsor supports winner cash prizes</li>
+                      <li>"Prizes sponsored by…" recognition</li>
+                      <li>On-stage visibility during prize distribution</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.7s">
-              <div className="service-item rounded pt-3">
-                <div className="p-4">
-                  <i className="fa fa-3x fa-video text-primary mb-4" />
-                  <h5>Stage Backdrop Sponsor</h5>
-                  <p className="mb-2">Full logo display on main stage backdrop</p>
-                  <p className="mb-2">High visibility in photographs & videos</p>
+              <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.4s">
+                <div className="sponsorship-category-card h-100">
+                  <div className="sponsorship-icon-wrapper">
+                    <i className="fa fa-video sponsorship-icon" />
+                  </div>
+                  <div className="sponsorship-card-content">
+                    <h4 className="sponsorship-card-title">Stage Backdrop Sponsor</h4>
+                    <ul className="sponsorship-benefits-list">
+                      <li>Full logo display on main stage backdrop</li>
+                      <li>High visibility in photographs & videos</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.9s">
-              <div className="service-item rounded pt-3">
-                <div className="p-4">
-                  <i className="fa fa-3x fa-flag-checkered text-primary mb-4" />
-                  <h5>Start / Finish Line Sponsor</h5>
-                  <p className="mb-2">Branding on start/finish arch banners</p>
-                  <p className="mb-2">Maximum photo & video exposure</p>
+              <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
+                <div className="sponsorship-category-card h-100">
+                  <div className="sponsorship-icon-wrapper">
+                    <i className="fa fa-flag-checkered sponsorship-icon" />
+                  </div>
+                  <div className="sponsorship-card-content">
+                    <h4 className="sponsorship-card-title">Start / Finish Line Sponsor</h4>
+                    <ul className="sponsorship-benefits-list">
+                      <li>Branding on start/finish arch banners</li>
+                      <li>Maximum photo & video exposure</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="1.1s">
-              <div className="service-item rounded pt-3">
-                <div className="p-4">
-                  <i className="fa fa-3x fa-store text-primary mb-4" />
-                  <h5>Local Business Partners</h5>
-                  <p className="mb-2">Banner display at venue</p>
-                  <p className="mb-2">Name on sponsor thank-you board</p>
-                  <p className="mb-2">Public acknowledgement</p>
-                  <small className="text-primary"><strong>Suggested Contribution: ₹5,000 – ₹10,000</strong></small>
+              <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.6s">
+                <div className="sponsorship-category-card h-100">
+                  <div className="sponsorship-icon-wrapper">
+                    <i className="fa fa-store sponsorship-icon" />
+                  </div>
+                  <div className="sponsorship-card-content">
+                    <h4 className="sponsorship-card-title">Local Business Partners</h4>
+                    <ul className="sponsorship-benefits-list">
+                      <li>Banner display at venue</li>
+                      <li>Name on sponsor thank-you board</li>
+                      <li>Public acknowledgement</li>
+                    </ul>
+                    <div className="sponsorship-contribution">
+                      <strong>Suggested Contribution: ₹5,000 – ₹10,000</strong>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

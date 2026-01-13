@@ -98,20 +98,43 @@ html, body {
     margin-left: 25px;
     padding: 35px 0;
     font-size: 15px;
-    color: var(--light) !important;
+    color: #FFFFFF !important;
     text-transform: uppercase;
-    font-weight: 500;
+    font-weight: 600;
+    letter-spacing: 0.5px;
     outline: none;
-    transition: .5s;
+    transition: all 0.3s ease;
+}
+
+.navbar-dark .navbar-nav .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 3px;
+    background: var(--primary);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover::after,
+.navbar-dark .navbar-nav .nav-link.active::after {
+    width: 80%;
 }
 
 .sticky-top.navbar-dark .navbar-nav .nav-link {
     padding: 20px 0;
 }
 
-.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: var(--primary) !important;
+}
+
 .navbar-dark .navbar-nav .nav-link.active {
     color: var(--primary) !important;
+    font-weight: 700;
 }
 
 .navbar-dark .navbar-brand img,
@@ -172,51 +195,354 @@ html, body {
 }
 
 
-/*** Hero Header ***/
-.hero-header {
-    background: linear-gradient(rgba(43, 30, 15, 0.607), rgba(82, 40, 27, 0.874)), url(https://racemart.in/storage/poster/poster-1723449615140.png);
+/*** Hero Banner - Clean & Minimal ***/
+.hero-banner {
+    background: url(../img/maraton.jpeg);
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
     position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 120px 0 80px;
 }
 
-/* Responsive Hero Header */
-@media (max-width: 768px) {
-    .hero-header {
-        min-height: 400px !important;
-        padding: 2rem 0 !important;
+.hero-overlay-dark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(215, 219, 227, 0.374) 0%, rgba(56, 67, 93, 0.772) 100%);
+    z-index: 1;
+}
+
+.hero-content-wrapper {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    min-height: 100%;
+}
+
+.hero-content {
+    max-width: 800px;
+    text-align: left;
+}
+
+/* Main Title - Bold Condensed Uppercase */
+.hero-main-title {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    color: #FFFFFF;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    text-shadow: 2px 4px 12px rgba(0, 0, 0, 0.9);
+    font-stretch: condensed;
+}
+
+/* Tagline - Clean Sans-serif */
+.hero-tagline-text {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+    color: #FEA116;
+    margin-bottom: 2rem;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9), 0 0 15px rgba(254, 161, 22, 0.6);
+    letter-spacing: 0.5px;
+    -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.3);
+}
+
+/* Date & Location */
+.hero-date-location {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: #FFFFFF;
+    margin-bottom: 2.5rem;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 1), 0 0 20px rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.hero-date-location i {
+    color: #FEA116;
+    opacity: 1;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9), 0 0 15px rgba(254, 161, 22, 0.8);
+    font-size: 1.1em;
+}
+
+.hero-date-location span {
+    color: #FFFFFF;
+    font-weight: 700;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 1);
+}
+
+.hero-separator {
+    margin: 0 0.75rem;
+    color: #FEA116;
+    opacity: 1;
+    font-weight: 800;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9), 0 0 12px rgba(254, 161, 22, 0.7);
+}
+
+/* Prize Money & Registration Fee */
+.hero-prize-fee {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+    align-items: center;
+}
+
+.hero-prize-badge,
+.hero-fee-badge {
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50px;
+    padding: 0.875rem 1.75rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.hero-prize-badge {
+    border-color: rgba(254, 161, 22, 0.5);
+}
+
+.hero-prize-badge:hover,
+.hero-fee-badge:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.hero-prize-badge:hover {
+    border-color: var(--primary);
+    background: rgba(254, 161, 22, 0.2);
+}
+
+.hero-fee-badge:hover {
+    border-color: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.hero-prize-badge i,
+.hero-fee-badge i {
+    color: var(--primary);
+    font-size: 1.25rem;
+    margin-right: 0.75rem;
+    text-shadow: 0 0 10px rgba(254, 161, 22, 0.6);
+}
+
+.hero-prize-label,
+.hero-fee-label {
+    color: #FFFFFF;
+    font-weight: 600;
+    font-size: clamp(0.85rem, 1.8vw, 0.95rem);
+    margin-right: 0.75rem;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.hero-prize-amount,
+.hero-fee-amount {
+    color: var(--primary);
+    font-weight: 800;
+    font-size: clamp(1rem, 2.2vw, 1.2rem);
+    text-shadow: 0 0 15px rgba(254, 161, 22, 0.8), 2px 2px 6px rgba(0, 0, 0, 0.9);
+    letter-spacing: 0.5px;
+}
+
+.hero-fee-amount {
+    color: #FFFFFF;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);
+}
+
+/* Distance Selector Pills - Bottom Right */
+.hero-distances {
+    position: absolute;
+    bottom: 40px;
+    right: 40px;
+    z-index: 3;
+    text-align: right;
+}
+
+.hero-distances-heading {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: clamp(0.9rem, 1.8vw, 1.1rem);
+    color: #FFFFFF;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.75rem;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);
+}
+
+.hero-distances-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.hero-distance-pill {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: clamp(0.95rem, 2vw, 1.1rem);
+    color: #FFFFFF;
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    padding: 0.75rem 2rem;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    backdrop-filter: blur(10px);
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.hero-distance-pill:hover {
+    background: rgba(254, 161, 22, 0.3);
+    border-color: #FEA116;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(254, 161, 22, 0.5);
+}
+
+/* Primary CTA Button - Orange */
+.hero-register-btn {
+    display: inline-block;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    color: #0F172B !important;
+    background: var(--primary);
+    padding: 1.125rem 3rem;
+    border-radius: 50px;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(254, 161, 22, 0.4);
+    border: none;
+    cursor: pointer;
+}
+
+.hero-register-btn:hover {
+    background: #e09012;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 30px rgba(254, 161, 22, 0.6);
+    color: #0F172B !important;
+}
+
+/* Responsive Design */
+@media (max-width: 991.98px) {
+    .hero-banner {
+        min-height: auto;
+        padding: 100px 0 60px;
     }
     
-    .hero-header .container-fluid {
-        padding: 1rem !important;
+    .hero-content {
+        text-align: center;
+        max-width: 100%;
+    }
+    
+    .hero-main-title {
+        letter-spacing: 2px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-banner {
+        padding: 80px 0 50px;
+    }
+    
+    .hero-main-title {
+        letter-spacing: 1.5px;
+        margin-bottom: 1.25rem;
+    }
+    
+    .hero-tagline-text {
+        margin-bottom: 1.5rem;
+    }
+    
+    .hero-date-location {
+        margin-bottom: 2rem;
+        justify-content: center;
+    }
+    
+    .hero-prize-fee {
+        justify-content: center;
+        margin-bottom: 2rem;
+        gap: 1rem;
+    }
+    
+    .hero-prize-badge,
+    .hero-fee-badge {
+        padding: 0.75rem 1.5rem;
+    }
+    
+    .hero-distances {
+        position: relative;
+        bottom: auto;
+        right: auto;
+        margin-top: 2rem;
+        margin-bottom: 0;
+        text-align: center;
+    }
+    
+    .hero-distances-heading {
+        text-align: center;
+    }
+    
+    .hero-distances-pills {
+        justify-content: center;
+    }
+    
+    .hero-register-btn {
+        width: 100%;
+        max-width: 100%;
     }
 }
 
 @media (max-width: 576px) {
-    .hero-header {
-        min-height: 350px !important;
-        padding: 1.5rem 0 !important;
+    .hero-banner {
+        padding: 60px 0 40px;
+        min-height: 70vh;
+    }
+    
+    .hero-main-title {
+        font-size: clamp(1.75rem, 8vw, 2.5rem);
+        letter-spacing: 1px;
+    }
+    
+    .hero-distance-pill {
+        padding: 0.625rem 1.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .hero-prize-fee {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .hero-prize-badge,
+    .hero-fee-badge {
+        width: 100%;
+        justify-content: center;
+        padding: 0.75rem 1.25rem;
     }
 }
 
-/* Active Nav Link */
-.navbar-nav .nav-link.active {
-    color: var(--primary) !important;
-    font-weight: 600;
-    position: relative;
-}
-
-.navbar-nav .nav-link.active::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60%;
-    height: 2px;
-    background-color: var(--primary);
-}
 
 .hero-header img {
     animation: imgRotate 50s linear infinite;
@@ -283,6 +609,177 @@ html, body {
 
 .service-item:hover * {
     color: var(--light) !important;
+}
+
+/*** Sponsorship Category Cards ***/
+.sponsorship-categories-section {
+    padding: 2rem 0;
+}
+
+.section-title-sponsor {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--dark);
+    position: relative;
+    display: inline-block;
+}
+
+.sponsorship-category-card {
+    background: #FFFFFF;
+    border: 2px solid #E8E8E8;
+    border-radius: 12px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+.sponsorship-category-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary) 0%, #FFC947 100%);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+}
+
+.sponsorship-category-card:hover::before {
+    transform: scaleX(1);
+}
+
+.sponsorship-category-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 30px rgba(254, 161, 22, 0.2);
+    border-color: var(--primary);
+}
+
+.sponsorship-icon-wrapper {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(254, 161, 22, 0.1) 0%, rgba(255, 201, 71, 0.1) 100%);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.sponsorship-category-card:hover .sponsorship-icon-wrapper {
+    background: linear-gradient(135deg, rgba(254, 161, 22, 0.2) 0%, rgba(255, 201, 71, 0.2) 100%);
+}
+
+.sponsorship-icon {
+    font-size: 3.5rem;
+    color: var(--primary);
+    transition: all 0.3s ease;
+}
+
+.sponsorship-category-card:hover .sponsorship-icon {
+    transform: scale(1.1);
+    color: var(--primary);
+}
+
+.sponsorship-card-content {
+    text-align: center;
+}
+
+.sponsorship-card-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 1.25rem;
+    transition: color 0.3s ease;
+}
+
+.sponsorship-category-card:hover .sponsorship-card-title {
+    color: var(--primary);
+}
+
+.sponsorship-benefits-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+    text-align: left;
+}
+
+.sponsorship-benefits-list li {
+    padding: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    transition: color 0.3s ease;
+}
+
+.sponsorship-benefits-list li::before {
+    content: '\f00c';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    left: 0;
+    color: var(--primary);
+    font-size: 0.85rem;
+}
+
+.sponsorship-category-card:hover .sponsorship-benefits-list li {
+    color: #333;
+}
+
+.sponsorship-ideal-for {
+    padding: 1rem;
+    background: #F8F9FA;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.6;
+    margin-top: 1rem;
+    border-left: 3px solid var(--primary);
+    transition: all 0.3s ease;
+}
+
+.sponsorship-category-card:hover .sponsorship-ideal-for {
+    background: rgba(254, 161, 22, 0.05);
+}
+
+.sponsorship-ideal-for strong {
+    color: var(--dark);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.sponsorship-contribution {
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(254, 161, 22, 0.1) 0%, rgba(255, 201, 71, 0.1) 100%);
+    border-radius: 8px;
+    color: var(--primary);
+    font-size: 0.95rem;
+    margin-top: 1rem;
+    text-align: center;
+    border: 1px solid rgba(254, 161, 22, 0.2);
+}
+
+@media (max-width: 991.98px) {
+    .sponsorship-category-card {
+        margin-bottom: 1.5rem;
+    }
+    
+    .section-title-sponsor {
+        font-size: 1.75rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .sponsorship-icon {
+        font-size: 3rem;
+    }
+    
+    .sponsorship-card-title {
+        font-size: 1.2rem;
+    }
 }
 
 
