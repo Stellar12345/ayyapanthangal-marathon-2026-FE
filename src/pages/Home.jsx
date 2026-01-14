@@ -1,7 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { createRegistration, verifyPayment } from "../api/registrationApi.js";
 
 function Home() {
+  const location = useLocation();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -9,6 +12,9 @@ function Home() {
     dateOfBirth: "",
     age: "",
     presentAddress: "",
+    state: "",
+    city: "",
+    pinCode: "",
     mobileNumber: "",
     medicalHistory: "",
     tshirtSize: "",
@@ -36,6 +42,18 @@ function Home() {
     KM_5: "5 KM",
     KM_3: "3 KM",
     KM_1_5: "1.5 KM",
+  };
+
+  const getRegistrationFee = (category) => {
+    const feeMap = {
+      "1.5 KM": 350,
+      "3 KM": 350,
+      "5 KM": 400,
+      KM_1_5: 350,
+      KM_3: 350,
+      KM_5: 400,
+    };
+    return feeMap[category] || 350;
   };
 
   const showNotification = (message, type = "error") => {
@@ -134,6 +152,17 @@ function Home() {
     if (!formData.presentAddress.trim()) {
       newErrors.presentAddress = "Present Address is required";
     }
+    if (!formData.state.trim()) {
+      newErrors.state = "State is required";
+    }
+    if (!formData.city.trim()) {
+      newErrors.city = "City is required";
+    }
+    if (!formData.pinCode.trim()) {
+      newErrors.pinCode = "Pin Code is required";
+    } else if (!/^\d{6}$/.test(formData.pinCode.trim())) {
+      newErrors.pinCode = "Pin Code must be 6 digits";
+    }
 
     if (!formData.mobileNumber.trim()) {
       newErrors.mobileNumber = "Mobile number is required";
@@ -184,7 +213,7 @@ function Home() {
     if (RAZORPAY_TEMPORARILY_DISABLED) {
       setIsSubmitting(false);
       showNotification(
-        "Oops! Payment gateway is temporarily unavailable. Please try again after some time or contact admin at +91 6379058035",
+        "Oops! Payment gateway is temporarily unavailable. Please try again after some time or contact admin at +91 94446 62322",
         "error"
       );
       // Scroll to contact section after a short delay
@@ -214,13 +243,16 @@ function Home() {
         dateOfBirth: formData.dateOfBirth,
         age: parseInt(formData.age),
         presentAddress: formData.presentAddress,
+        state: formData.state,
+        city: formData.city,
+        pinCode: formData.pinCode,
         tshirtSize: formData.tshirtSize,
         raceCategory: raceCategoryMap[formData.raceCategory] || formData.raceCategory,
         emergencyContactName: formData.emergencyContactName,
         emergencyContactMobile: formData.emergencyContactMobile,
         medicalHistory: formData.medicalHistory || "None",
         waiverAccepted: formData.waiverConsent,
-        amount: 300
+        amount: getRegistrationFee(formData.raceCategory)
       };
 
       // 1. Create registration on backend (generates Razorpay order)
@@ -266,6 +298,9 @@ function Home() {
               dateOfBirth: "",
               age: "",
               presentAddress: "",
+              state: "",
+              city: "",
+              pinCode: "",
               mobileNumber: "",
               medicalHistory: "",
               tshirtSize: "",
@@ -309,7 +344,43 @@ function Home() {
       }
     }
   };
+  // Handle hash navigation when component mounts or location changes
   useEffect(() => {
+    const hash = location.hash;
+    if (hash) {
+      // Wait for DOM to be ready
+      setTimeout(() => {
+        const targetId = hash.substring(1);
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+          const offsetTop = targetElement.offsetTop - 80;
+          window.scrollTo({
+            top: offsetTop,
+            behavior: 'smooth'
+          });
+        }
+      }, 300);
+    }
+  }, [location]);
+
+  useEffect(() => {
+    // Handle mobile menu icon toggle
+    const navbarCollapse = document.getElementById('navbarCollapse');
+    const handleMenuToggle = () => {
+      if (navbarCollapse) {
+        const isOpen = navbarCollapse.classList.contains('show');
+        setIsMenuOpen(isOpen);
+      }
+    };
+
+    if (navbarCollapse) {
+      navbarCollapse.addEventListener('shown.bs.collapse', handleMenuToggle);
+      navbarCollapse.addEventListener('hidden.bs.collapse', handleMenuToggle);
+      
+      // Initial check
+      handleMenuToggle();
+    }
+
     // Hide spinner immediately when component mounts
     const hideSpinner = () => {
       const spinner = document.getElementById("spinner");
@@ -424,30 +495,73 @@ function Home() {
     // Initial active link check
     updateActiveNavLink();
 
-    // Smooth scroll for anchor links
-    const anchorLinks = document.querySelectorAll('a[href^="#"]');
-    anchorLinks.forEach((link) => {
-      link.addEventListener("click", (e) => {
-        const href = link.getAttribute("href");
-        if (href !== "#" && href !== "#!") {
-          e.preventDefault();
-          const target = document.querySelector(href);
-          if (target) {
-            const offsetTop = target.offsetTop - 80; // Account for navbar height
+    // Handle hash navigation from other pages
+    const handleHashNavigation = () => {
+      const hash = window.location.hash;
+      if (hash) {
+        // Wait for page to fully load
+        setTimeout(() => {
+          const targetId = hash.substring(1); // Remove # from hash
+          const targetElement = document.getElementById(targetId);
+          if (targetElement) {
+            const offsetTop = targetElement.offsetTop - 80; // Account for navbar height
             window.scrollTo({
               top: offsetTop,
-              behavior: "smooth"
+              behavior: 'smooth'
             });
-            // Update active link after scroll
-            setTimeout(updateActiveNavLink, 500);
+            // Update active nav link after scroll
+            setTimeout(() => {
+              updateActiveNavLink();
+            }, 500);
           }
+        }, 100);
+      }
+    };
+
+    // Handle hash navigation on mount and after navigation
+    handleHashNavigation();
+    
+    // Also handle hash changes
+    window.addEventListener('hashchange', handleHashNavigation);
+
+    // Smooth scroll for anchor links
+    const anchorLinks = document.querySelectorAll('a[href^="#"]');
+    const handleAnchorClick = (e) => {
+      const href = e.currentTarget.getAttribute("href");
+      if (href && href !== "#" && href !== "#!") {
+        e.preventDefault();
+        const target = document.querySelector(href);
+        if (target) {
+          const offsetTop = target.offsetTop - 80; // Account for navbar height
+          window.scrollTo({
+            top: offsetTop,
+            behavior: "smooth"
+          });
+          // Update URL hash
+          if (href.startsWith('#')) {
+            window.history.pushState(null, '', href);
+          }
+          // Update active link after scroll
+          setTimeout(updateActiveNavLink, 500);
         }
-      });
+      }
+    };
+    
+    anchorLinks.forEach((link) => {
+      link.addEventListener("click", handleAnchorClick);
     });
 
     // Cleanup
     return () => {
       window.removeEventListener("scroll", handleAllScroll);
+      window.removeEventListener('hashchange', handleHashNavigation);
+      anchorLinks.forEach((link) => {
+        link.removeEventListener("click", handleAnchorClick);
+      });
+      if (navbarCollapse) {
+        navbarCollapse.removeEventListener('shown.bs.collapse', handleMenuToggle);
+        navbarCollapse.removeEventListener('hidden.bs.collapse', handleMenuToggle);
+      }
     };
   }, []);
 
@@ -490,20 +604,19 @@ function Home() {
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#navbarCollapse"
+            aria-expanded={isMenuOpen}
+            aria-label="Toggle navigation"
           >
-            <span className="fa fa-bars" />
+            <span className={isMenuOpen ? "fa fa-times" : "fa fa-bars"} />
           </button>
           <div className="collapse navbar-collapse" id="navbarCollapse">
             <div className="navbar-nav ms-auto py-0 pe-4">
               <a href="#home" className="nav-item nav-link active">
                 Home
               </a>
-              <a href="#about" className="nav-item nav-link">
-                About Event
-              </a>
-              <a href="#sponsorship" className="nav-item nav-link">
-                Sponsorship
-              </a>
+              <Link to="/event-details" className="nav-item nav-link">
+                Event Details
+              </Link>
               <a href="#register" className="nav-item nav-link">
                 Register
               </a>
@@ -533,24 +646,39 @@ function Home() {
               
               {/* Date & Location */}
               <div className="hero-date-location">
-                <i className="fa fa-calendar-alt me-2" />
-                <span>15 February 2026</span>
-                <span className="hero-separator">•</span>
-                <i className="fa fa-map-marker-alt me-2" />
-                <span>Ayyapanthangal</span>
+                <div className="hero-date-item">
+                  <i className="fa fa-calendar-alt me-2" />
+                  <span>15 February 2026</span>
+                </div>
+                <div className="hero-location-item">
+                  <i className="fa fa-map-marker-alt me-2" />
+                  <span>Ayyapanthangal</span>
+                </div>
               </div>
               
-              {/* Prize Money & Registration Fee */}
+              {/* Registration Fee */}
               <div className="hero-prize-fee">
-                <div className="hero-prize-badge">
-                  <i className="fa fa-trophy me-2" />
-                  <span className="hero-prize-label">Win Cash Prizes</span>
-                  <span className="hero-prize-amount">Up to ₹25,000</span>
-                </div>
                 <div className="hero-fee-badge">
-                  <i className="fa fa-rupee-sign me-2" />
-                  <span className="hero-fee-label">Registration Fee</span>
-                  <span className="hero-fee-amount">₹300</span>
+                  <div className="hero-fee-header">
+                    <i className="fa fa-rupee-sign me-2" />
+                    <span className="hero-fee-label">Registration Fee</span>
+                  </div>
+                  <div className="hero-fee-amount-list">
+                    <div className="hero-fee-item">
+                      <span className="hero-fee-distance">1.5 KM</span>
+                      <span className="hero-fee-price">₹350</span>
+                    </div>
+                    <div className="hero-fee-separator">|</div>
+                    <div className="hero-fee-item">
+                      <span className="hero-fee-distance">3 KM</span>
+                      <span className="hero-fee-price">₹350</span>
+                    </div>
+                    <div className="hero-fee-separator">|</div>
+                    <div className="hero-fee-item">
+                      <span className="hero-fee-distance">5 KM</span>
+                      <span className="hero-fee-price">₹400</span>
+                    </div>
+                  </div>
                 </div>
               </div>
               
@@ -558,6 +686,18 @@ function Home() {
               <a href="#register" className="hero-register-btn">
                 REGISTER NOW
               </a>
+            </div>
+            
+            {/* Prize Money - Right Side (New Attractive Design) */}
+            <div className="hero-prize-money-card">
+              <div className="hero-prize-money-icon">
+                <i className="fa fa-trophy" />
+              </div>
+              <div className="hero-prize-money-content">
+                <div className="hero-prize-money-label">Win Cash Prizes</div>
+                <div className="hero-prize-money-amount">Up to ₹25,000</div>
+              </div>
+              <div className="hero-prize-money-shine"></div>
             </div>
             
             {/* Distance Selector Pills - Bottom Right */}
@@ -579,38 +719,38 @@ function Home() {
         <div className="container-fluid px-4 px-lg-5">
           <div className="row g-4">
             <div className="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
-              <div className="service-item rounded pt-3">
-                <div className="p-4">
+              <div className="service-item rounded pt-3 h-100">
+                <div className="p-4 d-flex flex-column h-100">
                   <i className="fa fa-3x fa-calendar-alt text-primary mb-4" />
-                  <h5>Date</h5>
-                  <p>Sunday, 15 February 2026</p>
+                  <h5 className="mb-3">Date</h5>
+                  <p className="mb-0 flex-grow-1 d-flex align-items-end">Sunday, 15 February 2026</p>
                 </div>
               </div>
             </div>
             <div className="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
-              <div className="service-item rounded pt-3">
-                <div className="p-4">
+              <div className="service-item rounded pt-3 h-100">
+                <div className="p-4 d-flex flex-column h-100">
                   <i className="fa fa-3x fa-map-marker-alt text-primary mb-4" />
-                  <h5>Venue</h5>
-                  <p>Ayyapanthangal</p>
+                  <h5 className="mb-3">Venue</h5>
+                  <p className="mb-0 flex-grow-1 d-flex align-items-end">Ayyapanthangal</p>
                 </div>
               </div>
             </div>
             <div className="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.5s">
-              <div className="service-item rounded pt-3">
-                <div className="p-4">
+              <div className="service-item rounded pt-3 h-100">
+                <div className="p-4 d-flex flex-column h-100">
                   <i className="fa fa-3x fa-route text-primary mb-4" />
-                  <h5>Race Categories</h5>
-                  <p>1.5 KM | 3 KM | 5 KM</p>
+                  <h5 className="mb-3">Race Categories</h5>
+                  <p className="mb-0 flex-grow-1 d-flex align-items-end">1.5 KM | 3 KM | 5 KM</p>
                 </div>
               </div>
             </div>
             <div className="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.7s">
-              <div className="service-item rounded pt-3">
-                <div className="p-4">
+              <div className="service-item rounded pt-3 h-100">
+                <div className="p-4 d-flex flex-column h-100">
                   <i className="fa fa-3x fa-rupee-sign text-primary mb-4" />
-                  <h5>Registration Fee</h5>
-                  <p>₹300 per participant</p>
+                  <h5 className="mb-3">Registration Fee</h5>
+                  <p className="mb-0 flex-grow-1 d-flex align-items-end">1.5 KM: ₹350<br />3 KM: ₹350<br />5 KM: ₹400</p>
                 </div>
               </div>
             </div>
@@ -639,44 +779,51 @@ function Home() {
                 The event is designed to bring together people from different age groups 
                 to celebrate fitness, endurance, and community bonding through running.
               </p>
-              <div className="row g-4 mb-4 justify-content-center">
-                <div className="col-sm-6 col-md-5">
-                  <div className="d-flex align-items-center border-start border-5 border-primary px-3">
-                    <h1
-                      className="flex-shrink-0 display-5 text-primary mb-0"
-                    >
-                      300–500+
-                    </h1>
-                    <div className="ps-4">
-                      <p className="mb-0">Expected</p>
-                      <h6 className="text-uppercase mb-0">Participants</h6>
+              {/* Benefits & Prizes - Compact Design */}
+              <div className="benefits-prizes-compact">
+                <div className="row g-3">
+                  <div className="col-md-4 col-sm-6">
+                    <div className="benefit-item-compact">
+                      <div className="benefit-icon-compact">
+                        <i className="fa fa-tshirt" />
+                      </div>
+                      <div className="benefit-text-compact">
+                        <span className="benefit-label-compact">Event T-shirt</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-4 col-sm-6">
+                    <div className="benefit-item-compact">
+                      <div className="benefit-icon-compact">
+                        <i className="fa fa-medal" />
+                      </div>
+                      <div className="benefit-text-compact">
+                        <span className="benefit-label-compact">Finisher Medal</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-4 col-sm-6">
+                    <div className="benefit-item-compact">
+                      <div className="benefit-icon-compact">
+                        <i className="fa fa-certificate" />
+                      </div>
+                      <div className="benefit-text-compact">
+                        <span className="benefit-label-compact">Participation Certificate</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div className="col-sm-6 col-md-5">
-                  <div className="d-flex align-items-center border-start border-5 border-primary px-3">
-                    <h1
-                      className="flex-shrink-0 display-5 text-primary mb-0"
-                    >
-                      ₹25,000
-                    </h1>
-                    <div className="ps-4">
-                      <p className="mb-0">Total Prize</p>
-                      <h6 className="text-uppercase mb-0">Pool</h6>
-                    </div>
-                  </div>
+                <div className="prize-highlight-compact">
+                  <i className="fa fa-trophy me-2" />
+                  <span>Winners across categories will receive <strong>cash prizes</strong></span>
                 </div>
               </div>
-              <div className="mb-4">
-                <h5 className="mb-3">All participants completing the run will receive:</h5>
-                <ul className="list-unstyled">
-                  <li className="mb-2"><i className="fa fa-check text-primary me-2" />Event T-shirt</li>
-                  <li className="mb-2"><i className="fa fa-check text-primary me-2" />Finisher Medal</li>
-                  <li className="mb-2"><i className="fa fa-check text-primary me-2" />Participation Certificate</li>
-                </ul>
-                <p className="mb-0">
-                  <strong>Winners across categories will receive cash prizes, with a total prize pool of up to ₹25,000.</strong>
-                </p>
+              {/* Know More Button */}
+              <div className="text-center mt-4">
+                <Link to="/event-details" className="btn btn-primary btn-lg px-5 py-3">
+                  <i className="fa fa-arrow-right me-2" />
+                  Know More
+                </Link>
               </div>
             </div>
           </div>
@@ -684,394 +831,7 @@ function Home() {
       </div>
       {/* About Event End */}
 
-      {/* Event Objectives Start */}
-      <div className="container-fluid py-5 bg-light">
-        <div className="container-fluid px-4 px-lg-5">
-          <div className="text-center wow fadeInUp" data-wow-delay="0.1s">
-            <h5 className="section-title ff-secondary text-center text-primary fw-normal">
-              Event Objectives
-            </h5>
-            <h1 className="mb-5">Our Mission</h1>
-          </div>
-          <div className="row g-4">
-            <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-              <div className="service-item rounded pt-3">
-                <div className="p-4">
-                  <i className="fa fa-3x fa-heartbeat text-primary mb-4" />
-                  <h5>Promote Well-being</h5>
-                  <p>Promote physical and mental well-being</p>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-              <div className="service-item rounded pt-3">
-                <div className="p-4">
-                  <i className="fa fa-3x fa-dumbbell text-primary mb-4" />
-                  <h5>Daily Discipline</h5>
-                  <p>Encourage daily discipline through fitness</p>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
-              <div className="service-item rounded pt-3">
-                <div className="p-4">
-                  <i className="fa fa-3x fa-users text-primary mb-4" />
-                  <h5>Health Awareness</h5>
-                  <p>Create health awareness among youngsters and families</p>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.7s">
-              <div className="service-item rounded pt-3">
-                <div className="p-4">
-                  <i className="fa fa-3x fa-handshake text-primary mb-4" />
-                  <h5>Community Connect</h5>
-                  <p>Build a strong community connect through sports</p>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.9s">
-              <div className="service-item rounded pt-3">
-                <div className="p-4">
-                  <i className="fa fa-3x fa-bullhorn text-primary mb-4" />
-                  <h5>Brand Visibility</h5>
-                  <p>Provide sponsors meaningful brand visibility and goodwill</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* Event Objectives End */}
 
-      {/* Sponsorship Opportunities Start */}
-      <div className="container-fluid py-5" id="sponsorship">
-        <div className="container-fluid px-4 px-lg-5">
-          <div className="text-center wow fadeInUp" data-wow-delay="0.1s">
-            <h5 className="section-title ff-secondary text-center text-primary fw-normal">
-              Sponsorship Opportunities
-            </h5>
-            <h1 className="mb-5">Partner With Us</h1>
-            <p className="mb-5">
-              We invite organizations, institutions, hospitals, corporates, and local 
-              businesses to partner with us through the following sponsorship options:
-            </p>
-          </div>
-
-          {/* Title Sponsor & Co-Sponsor */}
-          <div className="row g-4 mb-5">
-            <div className="col-lg-6">
-              <div className="service-item rounded pt-3 border border-primary h-100">
-                <div className="p-4">
-                  <h3 className="text-primary mb-4">
-                    <i className="fa fa-crown me-2" />
-                    TITLE SPONSOR (Exclusive – 1 Partner)
-                  </h3>
-                  <h5 className="mb-3">Branding Benefits:</h5>
-                  <p className="mb-2">
-                    Event named as <strong>"[Brand Name] Ayyapanthangal Marathon 2026"</strong>
-                  </p>
-                  <p className="mb-3">Logo on:</p>
-                  <ul className="list-unstyled mb-4">
-                    <li className="mb-2"><i className="fa fa-check text-primary me-2" />Event T-shirts (front – prime visibility)</li>
-                    <li className="mb-2"><i className="fa fa-check text-primary me-2" />Main stage backdrop</li>
-                    <li className="mb-2"><i className="fa fa-check text-primary me-2" />Winner podium</li>
-                    <li className="mb-2"><i className="fa fa-check text-primary me-2" />Certificates & posters</li>
-                    <li className="mb-2"><i className="fa fa-check text-primary me-2" />Brand mentions during announcements</li>
-                    <li className="mb-2"><i className="fa fa-check text-primary me-2" />Stall space at venue</li>
-                  </ul>
-                  <h5 className="text-primary">Suggested Contribution: ₹75,000 – ₹1,50,000 (Cash / Partial in-kind)</h5>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-6">
-              <div className="service-item rounded pt-3 border border-primary h-100">
-                <div className="p-4">
-                  <h3 className="text-primary mb-4">
-                    <i className="fa fa-handshake me-2" />
-                    CO-SPONSOR (2–3 Partners)
-                  </h3>
-                  <h5 className="mb-3">Branding Benefits:</h5>
-                  <p className="mb-3">Logo on:</p>
-                  <ul className="list-unstyled mb-4">
-                    <li className="mb-2"><i className="fa fa-check text-primary me-2" />T-shirt (back/sleeve)</li>
-                    <li className="mb-2"><i className="fa fa-check text-primary me-2" />Stage side banners</li>
-                    <li className="mb-2"><i className="fa fa-check text-primary me-2" />Registration desk</li>
-                    <li className="mb-2"><i className="fa fa-check text-primary me-2" />On-stage acknowledgement</li>
-                  </ul>
-                  <h5 className="text-primary">Suggested Contribution: ₹30,000 – ₹50,000 per sponsor</h5>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Category-wise Sponsorship */}
-          <div className="sponsorship-categories-section mb-5">
-            <div className="text-center mb-5">
-              <h3 className="section-title-sponsor mb-3">Category-Wise Sponsorship Options</h3>
-              <p className="text-muted">Choose the sponsorship category that best fits your brand</p>
-            </div>
-            <div className="row g-4">
-              <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                <div className="sponsorship-category-card h-100">
-                  <div className="sponsorship-icon-wrapper">
-                    <i className="fa fa-tshirt sponsorship-icon" />
-                  </div>
-                  <div className="sponsorship-card-content">
-                    <h4 className="sponsorship-card-title">T-Shirt Sponsor</h4>
-                    <ul className="sponsorship-benefits-list">
-                      <li>Sponsor provides event T-shirts</li>
-                      <li>Logo prominently displayed on all runner T-shirts</li>
-                    </ul>
-                    <div className="sponsorship-ideal-for">
-                      <strong>Ideal for:</strong> Local Business conglomerate, Apparel brands, printing companies, sports stores
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.2s">
-                <div className="sponsorship-category-card h-100">
-                  <div className="sponsorship-icon-wrapper">
-                    <i className="fa fa-tint sponsorship-icon" />
-                  </div>
-                  <div className="sponsorship-card-content">
-                    <h4 className="sponsorship-card-title">Water / Hydration Sponsor</h4>
-                    <ul className="sponsorship-benefits-list">
-                      <li>Branding at water stations</li>
-                      <li>Logo on water bottles / cups</li>
-                      <li>Announcements during the event</li>
-                    </ul>
-                    <div className="sponsorship-ideal-for">
-                      <strong>Ideal for:</strong> Drinking water brands, beverage companies, RO suppliers
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-                <div className="sponsorship-category-card h-100">
-                  <div className="sponsorship-icon-wrapper">
-                    <i className="fa fa-trophy sponsorship-icon" />
-                  </div>
-                  <div className="sponsorship-card-content">
-                    <h4 className="sponsorship-card-title">Prize Money Sponsor</h4>
-                    <ul className="sponsorship-benefits-list">
-                      <li>Sponsor supports winner cash prizes</li>
-                      <li>"Prizes sponsored by…" recognition</li>
-                      <li>On-stage visibility during prize distribution</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.4s">
-                <div className="sponsorship-category-card h-100">
-                  <div className="sponsorship-icon-wrapper">
-                    <i className="fa fa-video sponsorship-icon" />
-                  </div>
-                  <div className="sponsorship-card-content">
-                    <h4 className="sponsorship-card-title">Stage Backdrop Sponsor</h4>
-                    <ul className="sponsorship-benefits-list">
-                      <li>Full logo display on main stage backdrop</li>
-                      <li>High visibility in photographs & videos</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
-                <div className="sponsorship-category-card h-100">
-                  <div className="sponsorship-icon-wrapper">
-                    <i className="fa fa-flag-checkered sponsorship-icon" />
-                  </div>
-                  <div className="sponsorship-card-content">
-                    <h4 className="sponsorship-card-title">Start / Finish Line Sponsor</h4>
-                    <ul className="sponsorship-benefits-list">
-                      <li>Branding on start/finish arch banners</li>
-                      <li>Maximum photo & video exposure</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.6s">
-                <div className="sponsorship-category-card h-100">
-                  <div className="sponsorship-icon-wrapper">
-                    <i className="fa fa-store sponsorship-icon" />
-                  </div>
-                  <div className="sponsorship-card-content">
-                    <h4 className="sponsorship-card-title">Local Business Partners</h4>
-                    <ul className="sponsorship-benefits-list">
-                      <li>Banner display at venue</li>
-                      <li>Name on sponsor thank-you board</li>
-                      <li>Public acknowledgement</li>
-                    </ul>
-                    <div className="sponsorship-contribution">
-                      <strong>Suggested Contribution: ₹5,000 – ₹10,000</strong>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* In-Kind Sponsorship */}
-          <div className="row g-4 mb-5">
-            <div className="col-12">
-              <div className="service-item rounded pt-3">
-                <div className="p-4">
-                  <h3 className="text-primary mb-4">
-                    <i className="fa fa-gift me-2" />
-                    In-Kind Sponsorship Options
-                  </h3>
-                  <p className="mb-3">We also welcome support in the form of:</p>
-                  <div className="row">
-                    <div className="col-md-6">
-                      <ul className="list-unstyled">
-                        <li className="mb-2"><i className="fa fa-check text-primary me-2" />Sound system & stage setup</li>
-                        <li className="mb-2"><i className="fa fa-check text-primary me-2" />Printing (banners, posters, certificates)</li>
-                      </ul>
-                    </div>
-                    <div className="col-md-6">
-                      <ul className="list-unstyled">
-                        <li className="mb-2"><i className="fa fa-check text-primary me-2" />Medical support / ambulance</li>
-                        <li className="mb-2"><i className="fa fa-check text-primary me-2" />Photography & videography</li>
-                      </ul>
-                    </div>
-                  </div>
-                  <p className="mb-0 mt-3">
-                    <strong>In-kind sponsors will receive branding and public recognition.</strong>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Why Partner & Post-Event */}
-          <div className="row g-4">
-            <div className="col-lg-6 wow fadeInUp" data-wow-delay="0.1s">
-              <div className="service-item rounded pt-3">
-                <div className="p-4">
-                  <h3 className="text-primary mb-4">Why Partner With Us?</h3>
-                  <ul className="list-unstyled">
-                    <li className="mb-2"><i className="fa fa-check text-primary me-2" />Strong local visibility and goodwill</li>
-                    <li className="mb-2"><i className="fa fa-check text-primary me-2" />Direct engagement with a health-focused audience</li>
-                    <li className="mb-2"><i className="fa fa-check text-primary me-2" />Positive brand association with fitness & community service</li>
-                    <li className="mb-2"><i className="fa fa-check text-primary me-2" />Long-term partnership opportunities for future editions</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-6 wow fadeInUp" data-wow-delay="0.3s">
-              <div className="service-item rounded pt-3">
-                <div className="p-4">
-                  <h3 className="text-primary mb-4">Post-Event Brand Value</h3>
-                  <p className="mb-3">All sponsors will receive:</p>
-                  <ul className="list-unstyled">
-                    <li className="mb-2"><i className="fa fa-check text-primary me-2" />Event photographs with branding</li>
-                    <li className="mb-2"><i className="fa fa-check text-primary me-2" />Thank-you posts on digital platforms</li>
-                    <li className="mb-2"><i className="fa fa-check text-primary me-2" />Certificate of appreciation</li>
-                    <li className="mb-2"><i className="fa fa-check text-primary me-2" />Event impact summary</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* Sponsorship Opportunities End */}
-
-      {/* Participant Profile Start */}
-      <div className="container-fluid py-5 bg-light">
-        <div className="container-fluid px-4 px-lg-5">
-          <div className="row g-5">
-            <div className="col-12">
-              <div className="text-center mb-5">
-                <h5 className="section-title ff-secondary text-center text-primary fw-normal">
-                  Participant Profile
-                </h5>
-                <h1 className="mb-4">Brand Visibility Opportunities</h1>
-              </div>
-              
-              <div className="row g-4 mb-5 pb-4">
-                <div className="col-lg-4 col-md-6">
-                  <div className="d-flex align-items-center border-start border-5 border-primary px-3 py-3">
-                    <div>
-                      <h3 className="text-primary mb-1">300–500+</h3>
-                      <p className="mb-0"><strong>Expected participants</strong></p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-lg-4 col-md-6">
-                  <div className="d-flex align-items-center border-start border-5 border-primary px-3 py-3">
-                    <div>
-                      <h3 className="text-primary mb-1">Youth, working professionals, families</h3>
-                      <p className="mb-0"><strong>Age group</strong></p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-lg-4 col-md-12">
-                  <div className="d-flex align-items-center border-start border-5 border-primary px-3 py-3">
-                    <div>
-                      <p className="mb-0"><strong>High local engagement with strong word-of-mouth reach</strong></p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mb-5">
-                <h3 className="text-center mb-4">Excellent Branding Opportunities Through:</h3>
-                <div className="row g-4">
-                  <div className="col-lg-4 col-md-6">
-                    <div className="service-item rounded pt-3">
-                      <div className="p-4 text-center">
-                        <i className="fa fa-3x fa-tshirt text-primary mb-3" />
-                        <h5>Event T-shirts</h5>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-lg-4 col-md-6">
-                    <div className="service-item rounded pt-3">
-                      <div className="p-4 text-center">
-                        <i className="fa fa-3x fa-video text-primary mb-3" />
-                        <h5>Stage backdrops</h5>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-lg-4 col-md-6">
-                    <div className="service-item rounded pt-3">
-                      <div className="p-4 text-center">
-                        <i className="fa fa-3x fa-flag-checkered text-primary mb-3" />
-                        <h5>Start/Finish banners</h5>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-lg-4 col-md-6">
-                    <div className="service-item rounded pt-3">
-                      <div className="p-4 text-center">
-                        <i className="fa fa-3x fa-camera text-primary mb-3" />
-                        <h5>Digital promotions & photographs</h5>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-lg-4 col-md-6">
-                    <div className="service-item rounded pt-3">
-                      <div className="p-4 text-center">
-                        <i className="fa fa-3x fa-bullhorn text-primary mb-3" />
-                        <h5>On-stage announcements</h5>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-center">
-                <p className="lead mb-0">
-                  This event provides sponsors direct engagement with a health-conscious 
-                  and aspirational audience.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* Participant Profile End */}
 
       {/* Conclusion Start */}
       <div className="container-fluid py-5">
@@ -1106,7 +866,7 @@ function Home() {
                   Registration
                 </h5>
                 <h1 className="mb-3 mb-md-4" style={{ fontSize: "clamp(1.5rem, 4vw, 2.5rem)" }}>Register for Ayyapanthangal Marathon 2026</h1>
-                <p className="lead mb-0" style={{ fontSize: "clamp(1rem, 2.5vw, 1.25rem)" }}>Registration Fee: ₹300 per participant</p>
+                <p className="lead mb-0" style={{ fontSize: "clamp(1rem, 2.5vw, 1.25rem)" }}>Registration Fee: 1.5 KM - ₹350 | 3 KM - ₹350 | 5 KM - ₹400</p>
               </div>
 
               {submitSuccess ? (
@@ -1228,6 +988,63 @@ function Home() {
                         required
                       ></textarea>
                       {errors.presentAddress && <div className="invalid-feedback">{errors.presentAddress}</div>}
+                    </div>
+
+                    {/* State */}
+                    <div className="col-12 col-md-4">
+                      <label htmlFor="state" className="form-label" style={{ fontSize: "clamp(0.9rem, 2vw, 1rem)" }}>
+                        State <span className="text-danger">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        className={`form-control ${errors.state ? 'is-invalid' : ''}`}
+                        id="state"
+                        name="state"
+                        value={formData.state}
+                        onChange={handleChange}
+                        placeholder="Enter state"
+                        required
+                      />
+                      {errors.state && <div className="invalid-feedback">{errors.state}</div>}
+                    </div>
+
+                    {/* City */}
+                    <div className="col-12 col-md-4">
+                      <label htmlFor="city" className="form-label" style={{ fontSize: "clamp(0.9rem, 2vw, 1rem)" }}>
+                        City <span className="text-danger">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        className={`form-control ${errors.city ? 'is-invalid' : ''}`}
+                        id="city"
+                        name="city"
+                        value={formData.city}
+                        onChange={handleChange}
+                        placeholder="Enter city"
+                        required
+                      />
+                      {errors.city && <div className="invalid-feedback">{errors.city}</div>}
+                    </div>
+
+                    {/* Pin Code */}
+                    <div className="col-12 col-md-4">
+                      <label htmlFor="pinCode" className="form-label" style={{ fontSize: "clamp(0.9rem, 2vw, 1rem)" }}>
+                        Pin Code <span className="text-danger">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        className={`form-control ${errors.pinCode ? 'is-invalid' : ''}`}
+                        id="pinCode"
+                        name="pinCode"
+                        value={formData.pinCode}
+                        onChange={handleChange}
+                        placeholder="Enter 6-digit pin code"
+                        maxLength="6"
+                        pattern="[0-9]{6}"
+                        inputMode="numeric"
+                        required
+                      />
+                      {errors.pinCode && <div className="invalid-feedback">{errors.pinCode}</div>}
                     </div>
 
                     {/* Mobile Number */}
@@ -1363,7 +1180,10 @@ function Home() {
                           required
                         />
                         <label className="form-check-label" htmlFor="waiverConsent" style={{ fontSize: "clamp(0.85rem, 2vw, 0.95rem)" }}>
-                          <span className="text-danger">*</span> I understand, there is associated risk with a marathon and waive the organisers from any liabilities
+                          <span className="text-danger">*</span> I understand, there is associated risk with a marathon and waive the organisers from any liabilities. I have read and agree to the{" "}
+                          <Link to="/terms" target="_blank" className="text-primary fw-bold" style={{ textDecoration: "underline" }}>
+                            Terms and Conditions
+                          </Link>
                         </label>
                         {errors.waiverConsent && <div className="invalid-feedback d-block">{errors.waiverConsent}</div>}
                       </div>
@@ -1383,7 +1203,9 @@ function Home() {
                             Processing...
                           </>
                         ) : (
-                          "Register & Pay ₹300"
+                          formData.raceCategory 
+                            ? `Register & Pay ₹${getRegistrationFee(formData.raceCategory)}`
+                            : "Register & Pay"
                         )}
                       </button>
                     </div>
@@ -1396,109 +1218,6 @@ function Home() {
       </div>
       {/* Registration Form End */}
 
-      {/* Terms & Conditions Start */}
-      <div className="container-fluid py-5 terms-section">
-        <div className="container-fluid px-3 px-md-4 px-lg-5">
-          <div className="row justify-content-center">
-            <div className="col-12 col-lg-10">
-              <div className="terms-card">
-                <h3 className="terms-title mb-3">Terms and Conditions</h3>
-                <ol className="terms-list">
-                  <li>
-                    Please choose the event carefully, confirmed registrations are non-refundable. You will have an option to change the Event
-                    Category after registration. The minimum age eligibility for various events is as follows:
-                    <ul className="mt-2">
-                      <li>10 km: 16 years (born on or before 4th January 2010)</li>
-                      <li>21 km: 18 years (born on or before 4th January 2008)</li>
-                      <li>32 km: 18 years (born on or before 4th January 2008)</li>
-                      <li>42 km: 18 years (born on or before 4th January 2008)</li>
-                    </ul>
-                  </li>
-                  <li>Proof of age shall be submitted by all participants while collecting their bib.</li>
-                  <li>
-                    Please provide us with a secure email address that you can access regularly, as email communication will be our primary means
-                    of contacting you during the run up to the Event. Users of email services that offer filtering / blocking of messages from
-                    unknown email address should add <strong>info@thechennaimarathon.com</strong> to their address list.
-                  </li>
-                  <li>
-                    The organizers will contact the runners by email / SMS / WhatsApp. Any notice sent to the email address registered with the
-                    organizers shall be deemed as received by the runners.
-                  </li>
-                  <li>
-                    By registering for any of the events, you acknowledge and accept that you are aware that long distance running is an extreme
-                    sport and can be injurious to body and health. You take full responsibility for participating in the Ayyapanthangal Marathon
-                    2026 and do not hold the organizers or other associated persons / entities responsible for any injury or accident.
-                  </li>
-                  <li>
-                    Irrespective of your age and fitness status, it is recommended that you consult your physician and undergo complete medical
-                    examination to assess your suitability to participate in the Event.
-                  </li>
-                  <li>
-                    You agree that you are aware of all risks associated with participating in this Event including, but not limited to, falls,
-                    contact with other participants, the effects of the weather (including high heat or humidity), traffic and the condition of
-                    the road, arson or terrorist threats and all other risks associated with a public event.
-                  </li>
-                  <li>
-                    You agree that the organizing committee and associated companies or entities that organize the Event shall not be liable for
-                    any loss, damage, illness or injury that might occur as a result of your participation in the Event.
-                  </li>
-                  <li>
-                    You agree to abide by the instructions provided by the organizers from time to time in the best interest of your health and
-                    Event safety.
-                  </li>
-                  <li>
-                    You agree to dress appropriately for the Event. Inappropriate clothing includes, but is not limited to, clothing or gear
-                    dangerous to other participants, unpleasant to other participants, or carrying messages containing political or religious
-                    propaganda and advertising an individual name or organization that the Event organizer does not acknowledge.
-                  </li>
-                  <li>
-                    You agree that you will not use the Event to promote or communicate by any means political or religious propaganda or
-                    advertising an individual name or organization that the Event organizer does not acknowledge.
-                  </li>
-                  <li>
-                    You also agree to stop running if instructed by the Event organizers or the medical staff or by the aid station volunteers.
-                  </li>
-                  <li>
-                    Copyright of images, photographs, articles, race records, and location information covering the Event, and their usage right
-                    for TV broadcasting, newspapers, magazines and the Internet, belongs to the Event organizer. This includes but is not limited
-                    to names and other personal information such as age and address of participants mentioned in coverage of the Event. You
-                    confirm that your name and media recordings taken during your participation may be used to publicize the Event at any time by
-                    the organizers.
-                  </li>
-                  <li>
-                    You acknowledge and agree that your personal information can be stored and used by the organizers or any other company in
-                    connection with the organization, promotion and administration of the Event and for the compilation of statistical
-                    information.
-                  </li>
-                  <li>
-                    You confirm that, in the event of adverse weather conditions, major incidents or threats on the day, the organizers reserve
-                    the right to stop / cancel / postpone the Event. You understand that confirmed registrations and merchandise orders are
-                    non‑refundable, non‑transferable and cannot be modified.
-                  </li>
-                  <li>
-                    The organizers reserve the right to reject any application without providing reasons. Any amount collected from rejected
-                    applications alone will be refunded in full (excluding bank charges wherever applicable).
-                  </li>
-                  <li>
-                    The Event team will communicate the cut‑off and Event closure time before race day. Participants will not be allowed to stay
-                    on the course beyond the stipulated cut‑off time for an event.
-                  </li>
-                  <li>
-                    It is mandatory for confirmed participants to visit the Expo to collect their running bib. If a participant is unable to
-                    attend the Expo due to unavoidable reasons, an authorized representative may collect the running bib on their behalf.
-                    Detailed instructions in this regard will be sent by email in due course to all participants.
-                  </li>
-                  <li>
-                    We will be sending regular updates to your registered mobile number as well. This should not be treated as spam and you shall
-                    not take any action against our bulk SMS / WhatsApp / email service provider and / or the organizers and partners.
-                  </li>
-                </ol>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* Terms & Conditions End */}
 
       {/* Payment Confirmation Modal */}
       {isPaymentModalOpen && paymentModalData && (
@@ -1585,7 +1304,7 @@ function Home() {
               </p>
               <p className="mb-2">
                 <i className="fa fa-rupee-sign me-3" />
-                Registration Fee: ₹300
+                Registration Fee: 1.5 KM - ₹350 | 3 KM - ₹350 | 5 KM - ₹400
               </p>
             </div>
             <div className="col-lg-4 col-md-6">
@@ -1599,13 +1318,13 @@ function Home() {
                   type="tel"
                   inputMode="numeric"
                   pattern="[0-9]*"
-                  placeholder="6379058035"
-                  defaultValue="6379058035"
+                  placeholder="94446 62322"
+                  defaultValue="94446 62322"
                   readOnly
                   style={{ backgroundColor: "#f8f9fa" }}
                 />
                 <a
-                  href="tel:+916379058035"
+                  href="tel:+919444662322"
                   className="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2"
                   style={{ textDecoration: "none" }}
                 >
@@ -1641,8 +1360,7 @@ function Home() {
               <div className="col-md-6 text-center text-md-end">
                 <div className="footer-menu">
                   <a href="#home">Home</a>
-                  <a href="#about">About</a>
-                  <a href="#sponsorship">Sponsorship</a>
+                  <Link to="/event-details">Event Details</Link>
                   <a href="#register">Register</a>
                   <a href="#contact">Contact</a>
                 </div>
