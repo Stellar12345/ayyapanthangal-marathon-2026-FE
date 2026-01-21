@@ -620,9 +620,9 @@ function Home() {
               <a href="#register" className="nav-item nav-link">
                 Register
               </a>
-              <a href="#contact" className="nav-item nav-link">
+              <Link to="/contact" className="nav-item nav-link">
                 Contact
-              </a>
+              </Link>
             </div>
             <a href="#register" className="btn btn-primary py-2 px-4">
               Register Now
@@ -630,7 +630,7 @@ function Home() {
           </div>
         </nav>
 
-        <div className="container-fluid hero-banner mb-5" id="home">
+        <div className="container-fluid hero-banner mb-5" id="home" style={{ minHeight: "60vh", padding: "80px 0 40px" }}>
           <div className="hero-overlay-dark"></div>
           <div className="container-fluid px-3 px-md-4 px-lg-5 hero-content-wrapper">
             <div className="hero-content">
@@ -666,18 +666,44 @@ function Home() {
                   <div className="hero-fee-amount-list">
                     <div className="hero-fee-item">
                       <span className="hero-fee-distance">1.5 KM</span>
-                      <span className="hero-fee-price">₹350</span>
+                      <span className="hero-fee-price">
+                        <span style={{ textDecoration: "line-through", opacity: 0.7, marginRight: "4px" }}>₹400</span>
+                        <span>₹350</span>
+                      </span>
                     </div>
                     <div className="hero-fee-separator">|</div>
                     <div className="hero-fee-item">
                       <span className="hero-fee-distance">3 KM</span>
-                      <span className="hero-fee-price">₹350</span>
+                      <span className="hero-fee-price">
+                        <span style={{ textDecoration: "line-through", opacity: 0.7, marginRight: "4px" }}>₹400</span>
+                        <span>₹350</span>
+                      </span>
                     </div>
                     <div className="hero-fee-separator">|</div>
                     <div className="hero-fee-item">
                       <span className="hero-fee-distance">5 KM</span>
-                      <span className="hero-fee-price">₹400</span>
+                      <span className="hero-fee-price">
+                        <span style={{ textDecoration: "line-through", opacity: 0.7, marginRight: "4px" }}>₹450</span>
+                        <span>₹400</span>
+                      </span>
                     </div>
+                  </div>
+                  <div
+                    style={{
+                      marginTop: "10px",
+                      display: "inline-block",
+                      padding: "6px 14px",
+                      borderRadius: "999px",
+                      backgroundColor: "rgba(255, 193, 7, 0.95)",
+                      fontSize: "0.9rem",
+                      color: "#3b2a00",
+                      fontWeight: 700,
+                      letterSpacing: "0.5px",
+                      textTransform: "uppercase",
+                      boxShadow: "0 0 10px rgba(0,0,0,0.3)"
+                    }}
+                  >
+                    Early Bird Offer – Limited Period Discount
                   </div>
                 </div>
               </div>
@@ -696,6 +722,41 @@ function Home() {
               <div className="hero-prize-money-content">
                 <div className="hero-prize-money-label">Win Cash Prizes</div>
                 <div className="hero-prize-money-amount">Up to ₹25,000</div>
+                <div style={{ 
+                  marginTop: "16px", 
+                  paddingTop: "16px", 
+                  borderTop: "2px solid rgba(255, 255, 255, 0.3)",
+                  fontSize: "clamp(0.9rem, 1.2vw, 1rem)", 
+                  lineHeight: "1.8",
+                  fontWeight: "500"
+                }}>
+                  <div style={{ 
+                    display: "flex", 
+                    alignItems: "center", 
+                    marginBottom: "10px",
+                    color: "#FFFFFF"
+                  }}>
+                    <i className="fa fa-tshirt me-3" style={{ fontSize: "1.2rem", color: "#FFD700" }}></i>
+                    <span style={{ fontWeight: "600" }}>Event T-shirt</span>
+                  </div>
+                  <div style={{ 
+                    display: "flex", 
+                    alignItems: "center", 
+                    marginBottom: "10px",
+                    color: "#FFFFFF"
+                  }}>
+                    <i className="fa fa-medal me-3" style={{ fontSize: "1.2rem", color: "#FFD700" }}></i>
+                    <span style={{ fontWeight: "600" }}>Finisher Medal</span>
+                  </div>
+                  <div style={{ 
+                    display: "flex", 
+                    alignItems: "center",
+                    color: "#FFFFFF"
+                  }}>
+                    <i className="fa fa-certificate me-3" style={{ fontSize: "1.2rem", color: "#FFD700" }}></i>
+                    <span style={{ fontWeight: "600" }}>Participation Certificate</span>
+                  </div>
+                </div>
               </div>
               <div className="hero-prize-money-shine"></div>
             </div>
@@ -758,103 +819,6 @@ function Home() {
         </div>
       </div>
       {/* Event Details End */}
-
-      {/* About Event Start */}
-      <div className="container-fluid py-5">
-        <div className="container-fluid px-4 px-lg-5">
-          <div className="row g-5">
-            <div className="col-12 text-center">
-              <h5 className="section-title ff-secondary text-center text-primary fw-normal">
-                About The Event
-              </h5>
-              <h1 className="mb-4">
-                Ayyapanthangal Marathon 2026
-              </h1>
-              <p className="mb-4">
-                The Ayyapanthangal Marathon 2026 is a community-driven fitness initiative 
-                aimed at promoting health awareness, discipline, and an active lifestyle 
-                among students, youngsters, working professionals, and families.
-              </p>
-              <p className="mb-4">
-                The event is designed to bring together people from different age groups 
-                to celebrate fitness, endurance, and community bonding through running.
-              </p>
-              {/* Benefits & Prizes - Compact Design */}
-              <div className="benefits-prizes-compact">
-                <div className="row g-3">
-                  <div className="col-md-4 col-sm-6">
-                    <div className="benefit-item-compact">
-                      <div className="benefit-icon-compact">
-                        <i className="fa fa-tshirt" />
-                      </div>
-                      <div className="benefit-text-compact">
-                        <span className="benefit-label-compact">Event T-shirt</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-4 col-sm-6">
-                    <div className="benefit-item-compact">
-                      <div className="benefit-icon-compact">
-                        <i className="fa fa-medal" />
-                      </div>
-                      <div className="benefit-text-compact">
-                        <span className="benefit-label-compact">Finisher Medal</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-4 col-sm-6">
-                    <div className="benefit-item-compact">
-                      <div className="benefit-icon-compact">
-                        <i className="fa fa-certificate" />
-                      </div>
-                      <div className="benefit-text-compact">
-                        <span className="benefit-label-compact">Participation Certificate</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="prize-highlight-compact">
-                  <i className="fa fa-trophy me-2" />
-                  <span>Winners across categories will receive <strong>cash prizes</strong></span>
-                </div>
-              </div>
-              {/* Know More Button */}
-              <div className="text-center mt-4">
-                <Link to="/event-details" className="btn btn-primary btn-lg px-5 py-3">
-                  <i className="fa fa-arrow-right me-2" />
-                  Know More
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* About Event End */}
-
-
-
-      {/* Conclusion Start */}
-      <div className="container-fluid py-5">
-        <div className="container-fluid px-4 px-lg-5">
-          <div className="row">
-            <div className="col-lg-8 mx-auto text-center">
-              <h5 className="section-title ff-secondary text-center text-primary fw-normal">
-                Conclusion
-              </h5>
-              <h1 className="mb-4">Join Us in This Movement</h1>
-              <p className="mb-4 lead">
-                We believe that the Ayyapanthangal Marathon 2026 is more than just a run—it 
-                is a movement towards healthier living and disciplined lifestyles. We invite 
-                you to partner with us and be a part of this meaningful community initiative.
-              </p>
-              <p className="mb-4 lead">
-                We look forward to your support and association.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* Conclusion End */}
 
       {/* Registration Form Start */}
       <div className="container-fluid py-4 py-md-5" id="register">
@@ -1218,6 +1182,103 @@ function Home() {
       </div>
       {/* Registration Form End */}
 
+      {/* About Event Start */}
+      <div className="container-fluid py-5">
+        <div className="container-fluid px-4 px-lg-5">
+          <div className="row g-5">
+            <div className="col-12 text-center">
+              <h5 className="section-title ff-secondary text-center text-primary fw-normal">
+                About The Event
+              </h5>
+              <h1 className="mb-4">
+                Ayyapanthangal Marathon 2026
+              </h1>
+              <p className="mb-4">
+                The Ayyapanthangal Marathon 2026 is a community-driven fitness initiative 
+                aimed at promoting health awareness, discipline, and an active lifestyle 
+                among students, youngsters, working professionals, and families.
+              </p>
+              <p className="mb-4">
+                The event is designed to bring together people from different age groups 
+                to celebrate fitness, endurance, and community bonding through running.
+              </p>
+              {/* Benefits & Prizes - Compact Design */}
+              <div className="benefits-prizes-compact">
+                <div className="row g-3">
+                  <div className="col-md-4 col-sm-6">
+                    <div className="benefit-item-compact">
+                      <div className="benefit-icon-compact">
+                        <i className="fa fa-tshirt" />
+                      </div>
+                      <div className="benefit-text-compact">
+                        <span className="benefit-label-compact">Event T-shirt</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-4 col-sm-6">
+                    <div className="benefit-item-compact">
+                      <div className="benefit-icon-compact">
+                        <i className="fa fa-medal" />
+                      </div>
+                      <div className="benefit-text-compact">
+                        <span className="benefit-label-compact">Finisher Medal</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-4 col-sm-6">
+                    <div className="benefit-item-compact">
+                      <div className="benefit-icon-compact">
+                        <i className="fa fa-certificate" />
+                      </div>
+                      <div className="benefit-text-compact">
+                        <span className="benefit-label-compact">Participation Certificate</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="prize-highlight-compact">
+                  <i className="fa fa-trophy me-2" />
+                  <span>Winners across categories will receive <strong>cash prizes</strong></span>
+                </div>
+              </div>
+              {/* Know More Button */}
+              <div className="text-center mt-4">
+                <Link to="/event-details" className="btn btn-primary btn-lg px-5 py-3">
+                  <i className="fa fa-arrow-right me-2" />
+                  Know More
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* About Event End */}
+
+
+
+      {/* Conclusion Start */}
+      <div className="container-fluid py-5">
+        <div className="container-fluid px-4 px-lg-5">
+          <div className="row">
+            <div className="col-lg-8 mx-auto text-center">
+              <h5 className="section-title ff-secondary text-center text-primary fw-normal">
+                Conclusion
+              </h5>
+              <h1 className="mb-4">Join Us in This Movement</h1>
+              <p className="mb-4 lead">
+                We believe that the Ayyapanthangal Marathon 2026 is more than just a run—it 
+                is a movement towards healthier living and disciplined lifestyles. We invite 
+                you to partner with us and be a part of this meaningful community initiative.
+              </p>
+              <p className="mb-4 lead">
+                We look forward to your support and association.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Conclusion End */}
+
 
       {/* Payment Confirmation Modal */}
       {isPaymentModalOpen && paymentModalData && (
@@ -1362,7 +1423,11 @@ function Home() {
                   <a href="#home">Home</a>
                   <Link to="/event-details">Event Details</Link>
                   <a href="#register">Register</a>
-                  <a href="#contact">Contact</a>
+                  <Link to="/contact">Contact</Link>
+                  <Link to="/terms">Terms & Conditions</Link>
+                  <Link to="/shipping-policy">Shipping Policy</Link>
+                  <Link to="/cancellation-refund">Refund Policy</Link>
+                  <Link to="/privacy-policy">Privacy Policy</Link>
                 </div>
               </div>
             </div>
@@ -1372,13 +1437,13 @@ function Home() {
       {/* Footer End */}
 
       {/* Back to Top */}
-      <a 
+      {/* <a 
         href="#home" 
         className="btn btn-lg btn-primary btn-lg-square back-to-top"
         style={{ display: "none" }}
       >
         <i className="bi bi-arrow-up" />
-      </a>
+      </a> */}
 
       {/* Notification Toast */}
       {notification && (

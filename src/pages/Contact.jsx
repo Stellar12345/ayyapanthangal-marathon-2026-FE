@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-function TermsAndConditions() {
+function Contact() {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
-    // Scroll to top on mount
     window.scrollTo(0, 0);
 
-    // Handle mobile menu icon toggle
     const navbarCollapse = document.getElementById('navbarCollapse');
     const handleMenuToggle = () => {
       if (navbarCollapse) {
@@ -71,7 +69,6 @@ function TermsAndConditions() {
                   if (element) {
                     window.scrollTo({ top: element.offsetTop - 80, behavior: 'smooth' });
                   } else {
-                    // Retry if element not found
                     setTimeout(() => {
                       const retryElement = document.getElementById('register');
                       if (retryElement) {
@@ -84,7 +81,7 @@ function TermsAndConditions() {
             >
               Register
             </a>
-            <Link to="/contact" className="nav-item nav-link">
+            <Link to="/contact" className="nav-item nav-link active">
               Contact
             </Link>
           </div>
@@ -92,108 +89,76 @@ function TermsAndConditions() {
       </nav>
       {/* Navbar End */}
 
-      {/* Terms & Conditions Start */}
-      <div className="container-fluid py-5" id="terms" style={{ marginTop: "100px", paddingTop: "40px" }}>
+      {/* Contact Us Start */}
+      <div className="container-fluid py-5" style={{ marginTop: "100px", paddingTop: "40px" }}>
         <div className="container-fluid px-4 px-lg-5">
           <div className="row justify-content-center">
             <div className="col-12 col-lg-10">
               <div className="terms-card">
-                <h3 className="terms-title mb-3">Terms and Conditions</h3>
-                <ol className="terms-list">
-                  <li>
-                    Please choose the event carefully, confirmed registrations are non-refundable. You will have an option to change the Event
-                    Category after registration. The minimum age eligibility for various events is as follows:
-                    <ul className="mt-2">
-                      <li>1.5 KM: 10 years (born on or before 15th February 2016)</li>
-                      <li>3 KM: 12 years (born on or before 15th February 2014)</li>
-                      <li>5 KM: 14 years (born on or before 15th February 2012)</li>
-                    </ul>
-                  </li>
-                  <li>Proof of age shall be submitted by all participants while collecting their bib.</li>
-                  <li>
-                    Please provide us with a secure email address that you can access regularly, as email communication will be our primary means
-                    of contacting you during the run up to the Event. Users of email services that offer filtering / blocking of messages from
-                    unknown email address should add the event email to their address list.
-                  </li>
-                  <li>
-                    The organizers will contact the runners by email / SMS / WhatsApp. Any notice sent to the email address registered with the
-                    organizers shall be deemed as received by the runners.
-                  </li>
-                  <li>
-                    By registering for any of the events, you acknowledge and accept that you are aware that long distance running is an extreme
-                    sport and can be injurious to body and health. You take full responsibility for participating in the Ayyapanthangal Marathon
-                    2026 and do not hold the organizers or other associated persons / entities responsible for any injury or accident.
-                  </li>
-                  <li>
-                    Irrespective of your age and fitness status, it is recommended that you consult your physician and undergo complete medical
-                    examination to assess your suitability to participate in the Event.
-                  </li>
-                  <li>
-                    You agree that you are aware of all risks associated with participating in this Event including, but not limited to, falls,
-                    contact with other participants, the effects of the weather (including high heat or humidity), traffic and the condition of
-                    the road, arson or terrorist threats and all other risks associated with a public event.
-                  </li>
-                  <li>
-                    You agree that the organizing committee and associated companies or entities that organize the Event shall not be liable for
-                    any loss, damage, illness or injury that might occur as a result of your participation in the Event.
-                  </li>
-                  <li>
-                    You agree to abide by the instructions provided by the organizers from time to time in the best interest of your health and
-                    Event safety.
-                  </li>
-                  <li>
-                    You agree to dress appropriately for the Event. Inappropriate clothing includes, but is not limited to, clothing or gear
-                    dangerous to other participants, unpleasant to other participants, or carrying messages containing political or religious
-                    propaganda and advertising an individual name or organization that the Event organizer does not acknowledge.
-                  </li>
-                  <li>
-                    You agree that you will not use the Event to promote or communicate by any means political or religious propaganda or
-                    advertising an individual name or organization that the Event organizer does not acknowledge.
-                  </li>
-                  <li>
-                    You also agree to stop running if instructed by the Event organizers or the medical staff or by the aid station volunteers.
-                  </li>
-                  <li>
-                    Copyright of images, photographs, articles, race records, and location information covering the Event, and their usage right
-                    for TV broadcasting, newspapers, magazines and the Internet, belongs to the Event organizer. This includes but is not limited
-                    to names and other personal information such as age and address of participants mentioned in coverage of the Event. You
-                    confirm that your name and media recordings taken during your participation may be used to publicize the Event at any time by
-                    the organizers.
-                  </li>
-                  <li>
-                    You acknowledge and agree that your personal information can be stored and used by the organizers or any other company in
-                    connection with the organization, promotion and administration of the Event and for the compilation of statistical
-                    information.
-                  </li>
-                  <li>
-                    You confirm that, in the event of adverse weather conditions, major incidents or threats on the day, the organizers reserve
-                    the right to stop / cancel / postpone the Event. You understand that confirmed registrations and merchandise orders are
-                    non‑refundable, non‑transferable and cannot be modified.
-                  </li>
-                  <li>
-                    The organizers reserve the right to reject any application without providing reasons. Any amount collected from rejected
-                    applications alone will be refunded in full (excluding bank charges wherever applicable).
-                  </li>
-                  <li>
-                    The Event team will communicate the cut‑off and Event closure time before race day. Participants will not be allowed to stay
-                    on the course beyond the stipulated cut‑off time for an event.
-                  </li>
-                  <li>
-                    It is mandatory for confirmed participants to visit the Expo to collect their running bib. If a participant is unable to
-                    attend the Expo due to unavoidable reasons, an authorized representative may collect the running bib on their behalf.
-                    Detailed instructions in this regard will be sent by email in due course to all participants.
-                  </li>
-                  <li>
-                    We will be sending regular updates to your registered mobile number as well. This should not be treated as spam and you shall
-                    not take any action against our bulk SMS / WhatsApp / email service provider and / or the organizers and partners.
-                  </li>
-                </ol>
+                <h3 className="terms-title mb-4">Contact Us</h3>
+                
+                <div className="mb-4">
+                  <h5 className="mb-3">APT Marathon</h5>
+                  <p className="mb-2">
+                    <strong>Organizer:</strong> Stellar Solutions
+                  </p>
+                  <p className="mb-2">
+                    <strong>Website:</strong> <a href="https://apt-marathon.stellarsolutions.org" target="_blank" rel="noopener noreferrer">https://apt-marathon.stellarsolutions.org</a>
+                  </p>
+                  <p className="mb-2">
+                    <strong>Country:</strong> India
+                  </p>
+                </div>
+
+                <div className="mb-4">
+                  <h5 className="mb-3">Get in Touch</h5>
+                  <p className="mb-2">
+                    <i className="fa fa-envelope me-2 text-primary"></i>
+                    <strong>Email:</strong> <a href="mailto:rameshnivasha@gmail.com">rameshnivasha@gmail.com</a>
+                  </p>
+                  <p className="mb-2">
+                    <i className="fa fa-phone me-2 text-primary"></i>
+                    <strong>Phone:</strong> <a href="tel:+919444662322" style={{ textDecoration: "none", color: "inherit" }}>+91-94446 62322</a>
+                  </p>
+                  <p className="mb-2">
+                    <i className="fa fa-clock me-2 text-primary"></i>
+                    <strong>Support Hours:</strong> Monday to Friday, 10:00 AM – 6:00 PM IST
+                  </p>
+                  <p className="mb-2">
+                    <i className="fa fa-map-marker-alt me-2 text-primary"></i>
+                    <strong>Address:</strong> India
+                  </p>
+                </div>
+
+                <div className="mb-4">
+                  <h5 className="mb-3">How We Can Help</h5>
+                  <p className="mb-2">
+                    Our support team is available to assist you with:
+                  </p>
+                  <ul>
+                    <li>Event registration inquiries</li>
+                    <li>Payment-related technical issues</li>
+                    <li>General questions about the marathon event</li>
+                    <li>Account and registration status inquiries</li>
+                  </ul>
+                </div>
+
+                <div className="mb-4">
+                  <h5 className="mb-3">Response Time</h5>
+                  <p>
+                    We aim to respond to all inquiries within 24-48 hours during business days. For urgent matters related to payment processing, please mention "URGENT" in your email subject line.
+                  </p>
+                </div>
+
+                <div className="alert alert-info mt-4">
+                  <strong>Note:</strong> Please note that all registrations are final and non-refundable. For details regarding our cancellation and refund policy, please visit our <Link to="/cancellation-refund">Cancellation & Refund Policy</Link> page.
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      {/* Terms & Conditions End */}
+      {/* Contact Us End */}
 
       {/* Footer Start */}
       <div className="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
@@ -328,4 +293,4 @@ function TermsAndConditions() {
   );
 }
 
-export default TermsAndConditions;
+export default Contact;

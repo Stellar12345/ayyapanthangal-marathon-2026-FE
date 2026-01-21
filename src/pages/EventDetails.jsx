@@ -85,30 +85,9 @@ function EventDetails() {
             >
               Register
             </a>
-            <a 
-              href="/#contact" 
-              className="nav-item nav-link"
-              onClick={(e) => {
-                e.preventDefault();
-                navigate('/');
-                setTimeout(() => {
-                  const element = document.getElementById('contact');
-                  if (element) {
-                    window.scrollTo({ top: element.offsetTop - 80, behavior: 'smooth' });
-                  } else {
-                    // Retry if element not found
-                    setTimeout(() => {
-                      const retryElement = document.getElementById('contact');
-                      if (retryElement) {
-                        window.scrollTo({ top: retryElement.offsetTop - 80, behavior: 'smooth' });
-                      }
-                    }, 500);
-                  }
-                }, 300);
-              }}
-            >
+            <Link to="/contact" className="nav-item nav-link">
               Contact
-            </a>
+            </Link>
           </div>
         </div>
       </nav>
@@ -429,21 +408,11 @@ function EventDetails() {
                   >
                     Register
                   </a>
-                  <a 
-                    href="/#contact"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      navigate('/');
-                      setTimeout(() => {
-                        const element = document.getElementById('contact');
-                        if (element) {
-                          window.scrollTo({ top: element.offsetTop - 80, behavior: 'smooth' });
-                        }
-                      }, 100);
-                    }}
-                  >
-                    Contact
-                  </a>
+                  <Link to="/contact">Contact</Link>
+                  <Link to="/terms">Terms & Conditions</Link>
+                  <Link to="/shipping-policy">Shipping Policy</Link>
+                  <Link to="/cancellation-refund">Refund Policy</Link>
+                  <Link to="/privacy-policy">Privacy Policy</Link>
                 </div>
               </div>
             </div>
