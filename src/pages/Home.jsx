@@ -258,6 +258,7 @@ function Home() {
       const registrationAmount = Number(
         registrationDataFromApi.amount ?? registrationData.amount
       );
+      
 
       // 2. Create Razorpay order for this registration
       const orderResponse = await createPaymentOrder({

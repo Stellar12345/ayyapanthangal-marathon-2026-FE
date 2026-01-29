@@ -14,6 +14,13 @@ function AdminDashboard() {
     finalRegistration: "",
     search: "",
   });
+  const [pagination, setPagination] = useState({
+    totalResults: 0,
+    currentPage: 1,
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
+  });
   const [selectedIds, setSelectedIds] = useState([]);
   const [selectedRegistration, setSelectedRegistration] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
@@ -37,12 +44,30 @@ function AdminDashboard() {
       const response = await getRegistrations({
         ...activeFilters,
         page: activeFilters?.page || 1,
-        limit: activeFilters?.limit || 50,
+        limit: activeFilters?.limit || 10,
       });
-      if (response.data && Array.isArray(response.data)) {
-        setRegistrations(response.data);
+      const responseData = response.data || response;
+      const container = responseData.data || responseData;
+      const items = container.items || container.results || container.registrations || container;
+      const pageInfo = container.pageInfo || responseData.pageInfo;
+
+      if (Array.isArray(items)) {
+        setRegistrations(items);
       } else {
         setError("Failed to load registrations.");
+      }
+
+      if (pageInfo) {
+        const currentPage = Number(pageInfo.currentPage || pageInfo.page || 1);
+        const totalPages = Number(pageInfo.totalPages || pageInfo.pageCount || 1);
+        setPagination({
+          totalResults: pageInfo.totalResults ?? pageInfo.total ?? stats.totalCount ?? 0,
+          currentPage,
+          totalPages,
+          hasNextPage: !!pageInfo.hasNextPage,
+          hasPrevPage: !!pageInfo.hasPrevPage,
+        });
+        setFilters((prev) => ({ ...prev, page: currentPage, limit: pageInfo.resultsPerPage || prev.limit || 50 }));
       }
     } catch (err) {
       setError(err?.message || "Failed to load registrations.");
@@ -92,6 +117,13 @@ function AdminDashboard() {
     };
     setFilters(empty);
     fetchRegistrations({ ...empty, page: 1 });
+  };
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > pagination.totalPages || page === pagination.currentPage) return;
+    const newFilters = { ...filters, page };
+    setFilters(newFilters);
+    fetchRegistrations(newFilters);
   };
 
   const handleViewDetails = async (id) => {
@@ -337,7 +369,14 @@ function AdminDashboard() {
 
         <div className="card">
           <div className="card-header d-flex justify-content-between align-items-center">
-            <h5 className="mb-0">Registrations List</h5>
+            <h5 className="mb-0">
+              Registrations List{" "}
+              {pagination.totalResults > 0 && (
+                <span className="text-muted" style={{ fontSize: "0.9rem" }}>
+                  (Page {pagination.currentPage} of {pagination.totalPages})
+                </span>
+              )}
+            </h5>
             <button
               type="button"
               className="btn btn-sm btn-outline-primary"
@@ -409,6 +448,31 @@ function AdminDashboard() {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            )}
+            {pagination.totalPages > 1 && (
+              <div className="d-flex justify-content-between align-items-center mt-3">
+                <div className="text-muted" style={{ fontSize: "0.9rem" }}>
+                  Total Results: {pagination.totalResults}
+                </div>
+                <div className="btn-group">
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline-secondary"
+                    disabled={!pagination.hasPrevPage}
+                    onClick={() => handlePageChange(pagination.currentPage - 1)}
+                  >
+                    Previous
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline-secondary"
+                    disabled={!pagination.hasNextPage}
+                    onClick={() => handlePageChange(pagination.currentPage + 1)}
+                  >
+                    Next
+                  </button>
+                </div>
               </div>
             )}
           </div>
