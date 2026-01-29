@@ -837,44 +837,200 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1050;
+    z-index: 20000;
+    padding: 1rem;
+    overflow-y: auto;
 }
 
 .payment-modal {
     background-color: #ffffff;
     border-radius: 12px;
     padding: 2rem;
-    max-width: 480px;
-    width: 90%;
+    max-width: 900px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    margin: auto;
 }
 
 .payment-modal-title {
     font-family: 'Nunito', sans-serif;
     font-weight: 800;
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     margin-bottom: 0.75rem;
+    color: #333;
 }
 
 .payment-modal-message {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    color: #28a745;
+    font-weight: 600;
 }
 
 .payment-modal-section {
-    font-size: 0.95rem;
+    font-size: 1rem;
     margin-bottom: 1.5rem;
 }
 
 .payment-modal-section div {
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+.registration-details-section {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.registration-details-section h5 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e8291b;
+}
+
+.registration-details-section .row {
+    margin-bottom: 0.75rem;
+}
+
+.registration-details-section strong {
+    color: #333;
+    font-weight: 600;
+    margin-right: 0.5rem;
 }
 
 .payment-modal-actions {
     text-align: right;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
 }
 
 .payment-modal-actions .btn {
-    min-width: 120px;
+    min-width: 140px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* Tablet Responsive */
+@media (max-width: 992px) {
+    .payment-modal {
+        max-width: 95%;
+        padding: 1.75rem;
+    }
+    
+    .payment-modal-title {
+        font-size: 1.5rem;
+    }
+    
+    .payment-modal-message {
+        font-size: 1rem;
+    }
+    
+    .registration-details-section {
+        padding: 1.25rem;
+    }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .payment-modal-backdrop {
+        padding: 0.5rem;
+        align-items: flex-start;
+        padding-top: 2rem;
+    }
+    
+    .payment-modal {
+        max-width: 100%;
+        padding: 1.5rem;
+        max-height: 95vh;
+        border-radius: 12px 12px 0 0;
+    }
+    
+    .payment-modal-title {
+        font-size: 1.35rem;
+    }
+    
+    .payment-modal-message {
+        font-size: 0.95rem;
+        margin-bottom: 1rem;
+    }
+    
+    .payment-modal-section {
+        font-size: 0.9rem;
+    }
+    
+    .registration-details-section {
+        padding: 1rem;
+    }
+    
+    .registration-details-section h5 {
+        font-size: 1.1rem;
+    }
+    
+    .registration-details-section .row {
+        margin-bottom: 1rem;
+    }
+    
+    .registration-details-section .col-md-6 {
+        margin-bottom: 0.75rem;
+    }
+    
+    .payment-modal-actions {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .payment-modal-actions .btn {
+        width: 100%;
+        min-width: auto;
+    }
+}
+
+/* Small Mobile */
+@media (max-width: 576px) {
+    .payment-modal {
+        padding: 1.25rem;
+        border-radius: 12px 12px 0 0;
+    }
+    
+    .payment-modal-title {
+        font-size: 1.2rem;
+    }
+    
+    .payment-modal-message {
+        font-size: 0.9rem;
+    }
+    
+    .payment-modal-section {
+        font-size: 0.85rem;
+    }
+    
+    .registration-details-section {
+        padding: 0.875rem;
+    }
+    
+    .registration-details-section h5 {
+        font-size: 1rem;
+    }
+    
+    .registration-details-section .row {
+        flex-direction: column;
+    }
+    
+    .registration-details-section .col-md-6 {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
 }
 @media (max-width: 576px) {
     .hero-banner {
@@ -1790,7 +1946,7 @@ html, body {
 }
 
 .modal-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #e8291b 0%, #c41e1e 50%, #a01717 100%);
     color: white;
     border-bottom: none;
     border-radius: 10px 10px 0 0;
@@ -1816,7 +1972,7 @@ html, body {
 }
 
 .modal-body strong {
-    color: #667eea;
+    color: #e8291b;
     font-weight: 600;
     display: block;
     margin-bottom: 0.25rem;
@@ -1825,9 +1981,21 @@ html, body {
     letter-spacing: 0.5px;
 }
 
-.modal-footer {
-    border-top: 1px solid #e9ecef;
-    padding: 1rem 2rem;
+/* Custom admin detail modal backdrop & dialog */
+.admin-detail-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 43, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 15000;
+}
+
+.admin-detail-modal-dialog {
+    max-width: 900px;
+    width: 100%;
+    padding: 1rem;
 }
 
 /* Responsive adjustments for admin dashboard */

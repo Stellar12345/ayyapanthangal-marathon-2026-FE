@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getRegistrations, getRegistrationById } from "../api/adminApi";
+import { getRegistrations, getRegistrationById, getAdminStats } from "../api/adminApi";
 
 function AdminDashboard() {
   const navigate = useNavigate();
   const [registrations, setRegistrations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [stats, setStats] = useState({ totalCount: 0, totalRevenue: 0 });
+  const [filters, setFilters] = useState({
+    paymentStatus: "PAID",
+    raceCategory: "",
+    finalRegistration: "",
+    search: "",
+  });
+  const [selectedIds, setSelectedIds] = useState([]);
   const [selectedRegistration, setSelectedRegistration] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [detailLoading, setDetailLoading] = useState(false);
@@ -18,13 +26,19 @@ function AdminDashboard() {
       return;
     }
     fetchRegistrations();
+    fetchStats();
   }, [navigate]);
 
-  const fetchRegistrations = async () => {
+  const fetchRegistrations = async (overrideFilters) => {
     try {
       setLoading(true);
       setError("");
-      const response = await getRegistrations();
+      const activeFilters = overrideFilters || filters;
+      const response = await getRegistrations({
+        ...activeFilters,
+        page: activeFilters?.page || 1,
+        limit: activeFilters?.limit || 50,
+      });
       if (response.data && Array.isArray(response.data)) {
         setRegistrations(response.data);
       } else {
@@ -39,6 +53,45 @@ function AdminDashboard() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchStats = async () => {
+    try {
+      const response = await getAdminStats();
+      if (response.data) {
+        setStats({
+          totalCount: response.data.totalCount ?? 0,
+          totalRevenue: response.data.totalRevenue ?? 0,
+        });
+      }
+    } catch (err) {
+      // Do not block the page for stats error; just log silently.
+      console.error("Failed to load admin stats:", err);
+    }
+  };
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleFilterSubmit = (e) => {
+    e.preventDefault();
+    fetchRegistrations({ ...filters, page: 1 });
+  };
+
+  const handleClearFilters = () => {
+    const empty = {
+      paymentStatus: "",
+      raceCategory: "",
+      finalRegistration: "",
+      search: "",
+    };
+    setFilters(empty);
+    fetchRegistrations({ ...empty, page: 1 });
   };
 
   const handleViewDetails = async (id) => {
@@ -97,17 +150,66 @@ function AdminDashboard() {
     return <span className={statusClass}>{status || "N/A"}</span>;
   };
 
-  if (loading) {
-    return (
-      <div className="container mt-5">
-        <div className="text-center">
-          <div className="spinner-border" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-        </div>
-      </div>
+  const toggleSelectAll = () => {
+    if (selectedIds.length === registrations.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(registrations.map((r) => r.id));
+    }
+  };
+
+  const toggleSelectOne = (id) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
-  }
+  };
+
+  const handleExportCsv = () => {
+    const rows =
+      selectedIds.length > 0
+        ? registrations.filter((r) => selectedIds.includes(r.id))
+        : registrations;
+
+    if (!rows.length) {
+      alert("No registrations to export.");
+      return;
+    }
+
+    const header = [
+      "Reference Number",
+      "Name",
+      "Email",
+      "Mobile",
+      "Race Category",
+      "Amount",
+      "Payment Status",
+      "Created At",
+    ];
+
+    const csvRows = [
+      header.join(","),
+      ...rows.map((r) =>
+        [
+          r.referenceNumber || r.ticketId || "",
+          `"${(r.name || "").replace(/"/g, '""')}"`,
+          `"${(r.email || "").replace(/"/g, '""')}"`,
+          r.mobileNumber || "",
+          formatRaceCategory(r.raceCategory),
+          r.amount ?? "",
+          r.paymentStatus || "",
+          formatDate(r.createdAt),
+        ].join(",")
+      ),
+    ];
+
+    const blob = new Blob([csvRows.join("\n")], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "registrations.csv";
+    link.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="container-fluid py-4">
@@ -119,25 +221,151 @@ function AdminDashboard() {
           </button>
         </div>
 
+        {/* Stats Summary */}
+        <div className="row mb-4">
+          <div className="col-md-6 mb-3">
+            <div className="card border-primary h-100">
+              <div className="card-body d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 className="card-subtitle mb-1 text-muted">Total Registrations</h6>
+                  <h3 className="card-title mb-0">{stats.totalCount}</h3>
+                </div>
+                <div>
+                  <i className="fa fa-users text-primary" style={{ fontSize: "2rem" }}></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-6 mb-3">
+            <div className="card border-success h-100">
+              <div className="card-body d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 className="card-subtitle mb-1 text-muted">Total Revenue (₹)</h6>
+                  <h3 className="card-title mb-0">₹{stats.totalRevenue}</h3>
+                </div>
+                <div>
+                  <i className="fa fa-rupee-sign text-success" style={{ fontSize: "2rem" }}></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {error && (
           <div className="alert alert-danger" role="alert">
             {error}
           </div>
         )}
 
-        <div className="card">
+        {/* Filters */}
+        <div className="card mb-4">
           <div className="card-header">
+            <h5 className="mb-0">Filters</h5>
+          </div>
+          <div className="card-body">
+            <form onSubmit={handleFilterSubmit}>
+              <div className="row g-3">
+                <div className="col-md-3">
+                  <label className="form-label">Payment Status</label>
+                  <select
+                    name="paymentStatus"
+                    className="form-select"
+                    value={filters.paymentStatus}
+                    onChange={handleFilterChange}
+                  >
+                    <option value="">All</option>
+                    <option value="PAID">Paid</option>
+                    <option value="PENDING">Pending</option>
+                    <option value="FAILED">Failed</option>
+                  </select>
+                </div>
+                <div className="col-md-3">
+                  <label className="form-label">Race Category</label>
+                  <select
+                    name="raceCategory"
+                    className="form-select"
+                    value={filters.raceCategory}
+                    onChange={handleFilterChange}
+                  >
+                    <option value="">All</option>
+                    <option value="KM_1_5">1.5 KM</option>
+                    <option value="KM_3">3 KM</option>
+                    <option value="KM_5">5 KM</option>
+                  </select>
+                </div>
+                <div className="col-md-3">
+                  <label className="form-label">Final Registration</label>
+                  <select
+                    name="finalRegistration"
+                    className="form-select"
+                    value={filters.finalRegistration}
+                    onChange={handleFilterChange}
+                  >
+                    <option value="">All</option>
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                  </select>
+                </div>
+                <div className="col-md-3">
+                  <label className="form-label">Search (name/email/mobile)</label>
+                  <input
+                    type="text"
+                    name="search"
+                    className="form-control"
+                    value={filters.search}
+                    onChange={handleFilterChange}
+                    placeholder="Search..."
+                  />
+                </div>
+                
+              </div>
+              <div className="mt-3 d-flex gap-2">
+                <button type="submit" className="btn btn-primary">
+                  Apply Filters
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={handleClearFilters}
+                >
+                  Clear Filters
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="card-header d-flex justify-content-between align-items-center">
             <h5 className="mb-0">Registrations List</h5>
+            <button
+              type="button"
+              className="btn btn-sm btn-outline-primary"
+              onClick={handleExportCsv}
+              disabled={registrations.length === 0}
+            >
+              Export CSV
+            </button>
           </div>
           <div className="card-body">
             {registrations.length === 0 ? (
               <p className="text-muted">No registrations found.</p>
             ) : (
               <div className="table-responsive">
-                <table className="table table-striped table-hover">
+                <table className="table table-striped table-hover admin-dashboard-table">
                   <thead>
                     <tr>
-                      <th>Ticket ID</th>
+                      <th>
+                        <input
+                          type="checkbox"
+                          checked={
+                            registrations.length > 0 &&
+                            selectedIds.length === registrations.length
+                          }
+                          onChange={toggleSelectAll}
+                        />
+                      </th>
+                      <th>Reference Number</th>
                       <th>Name</th>
                       <th>Email</th>
                       <th>Mobile</th>
@@ -150,9 +378,16 @@ function AdminDashboard() {
                   </thead>
                   <tbody>
                     {registrations.map((reg) => (
-                      <tr key={reg.id}>
+                    <tr key={reg.id}>
                         <td>
-                          <strong>{reg.ticketId || "N/A"}</strong>
+                          <input
+                            type="checkbox"
+                            checked={selectedIds.includes(reg.id)}
+                            onChange={() => toggleSelectOne(reg.id)}
+                          />
+                        </td>
+                        <td>
+                          <strong>{reg.referenceNumber || reg.ticketId || "N/A"}</strong>
                         </td>
                         <td>{reg.name}</td>
                         <td>{reg.email}</td>
@@ -182,16 +417,15 @@ function AdminDashboard() {
 
       {/* Detail Modal */}
       {showDetailModal && selectedRegistration && (
-        <div
-          className="modal fade show"
-          style={{ display: "block" }}
-          tabIndex="-1"
-        >
-          <div className="modal-dialog modal-lg modal-dialog-scrollable">
+        <div className="admin-detail-modal-backdrop">
+          <div className="admin-detail-modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">
-                  Registration Details - {selectedRegistration.ticketId}
+                  Registration Details -{" "}
+                  {selectedRegistration.referenceNumber ||
+                    selectedRegistration.ticketId ||
+                    selectedRegistration.id}
                 </h5>
                 <button
                   type="button"
@@ -202,7 +436,15 @@ function AdminDashboard() {
                   }}
                 ></button>
               </div>
-              <div className="modal-body">
+              <div
+                className="modal-body"
+                style={{
+                  maxHeight: "70vh",
+                  overflowY: "auto",
+                  backgroundColor: "#ffffff",
+                  color: "#212529",
+                }}
+              >
                 <div className="row">
                   <div className="col-md-6 mb-3">
                     <strong>Name:</strong> {selectedRegistration.name}
@@ -293,13 +535,6 @@ function AdminDashboard() {
               </div>
             </div>
           </div>
-          <div
-            className="modal-backdrop fade show"
-            onClick={() => {
-              setShowDetailModal(false);
-              setSelectedRegistration(null);
-            }}
-          ></div>
         </div>
       )}
     </div>

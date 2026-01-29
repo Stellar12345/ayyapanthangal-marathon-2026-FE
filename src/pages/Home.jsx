@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { createRegistration, verifyPayment } from "../api/registrationApi.js";
+import { createRegistration, createPaymentOrder, getPaymentStatus, getRegistrationById } from "../api/registrationApi.js";
 
 function Home() {
   const location = useLocation();
@@ -30,6 +30,7 @@ function Home() {
   const [paymentModalData, setPaymentModalData] = useState(null);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [notification, setNotification] = useState(null);
+  const [isCheckingPayment, setIsCheckingPayment] = useState(false);
   const invoiceRef = useRef(null);
 
   const genderMap = {
@@ -76,17 +77,31 @@ function Home() {
     printWindow.document.write(`
       <html>
         <head>
-          <title>Registration Invoice</title>
+          <title>Registration Confirmation - Ayyapanthangal Marathon 2026</title>
           <style>
-            body { font-family: Arial, sans-serif; padding: 24px; }
-            h2 { margin-bottom: 16px; }
-            .invoice-section { margin-bottom: 10px; }
+            body { font-family: Arial, sans-serif; padding: 24px; max-width: 800px; margin: 0 auto; }
+            h2, h4, h5 { margin-bottom: 16px; color: #333; }
+            .invoice-section { margin-bottom: 15px; }
+            .registration-details-section, .payment-details-section { 
+              margin-top: 20px; 
+              padding: 15px; 
+              background-color: #f8f9fa; 
+              border-radius: 5px; 
+            }
             .label { font-weight: 600; }
-            table { width: 100%; border-collapse: collapse; margin-top: 16px; }
-            th, td { padding: 8px 6px; border-bottom: 1px solid #ddd; text-align: left; }
+            div { margin-bottom: 8px; line-height: 1.6; }
+            strong { color: #333; }
+            @media print {
+              body { padding: 20px; }
+              .payment-modal-actions { display: none; }
+            }
           </style>
         </head>
-        <body>${printContents}</body>
+        <body>
+          <h2>Ayyapanthangal Marathon 2026</h2>
+          <h4>Registration Confirmation</h4>
+          ${printContents}
+        </body>
       </html>
     `);
     printWindow.document.close();
@@ -204,35 +219,6 @@ function Home() {
 
     setIsSubmitting(true);
 
-    // ============================================
-    // TEMPORARY: Razorpay integration disabled
-    // TODO: Remove this block after Razorpay is set up
-    // ============================================
-    const RAZORPAY_TEMPORARILY_DISABLED = true; // Set to false when Razorpay is ready
-    
-    if (RAZORPAY_TEMPORARILY_DISABLED) {
-      setIsSubmitting(false);
-      showNotification(
-        "Oops! Payment gateway is temporarily unavailable. Please try again after some time or contact admin at +91 94446 62322",
-        "error"
-      );
-      // Scroll to contact section after a short delay
-      setTimeout(() => {
-        const contactSection = document.querySelector("#contact");
-        if (contactSection) {
-          const offsetTop = contactSection.offsetTop - 80;
-          window.scrollTo({
-            top: offsetTop,
-            behavior: "smooth"
-          });
-        }
-      }, 1500);
-      return;
-    }
-    // ============================================
-    // END OF TEMPORARY BLOCK
-    // ============================================
-
     try {
       // Prepare registration data (normalize values to match backend expectations)
       const registrationData = {
@@ -245,7 +231,7 @@ function Home() {
         presentAddress: formData.presentAddress,
         state: formData.state,
         city: formData.city,
-        pinCode: formData.pinCode,
+        pincode: formData.pinCode, // backend expects "pincode" as string
         tshirtSize: formData.tshirtSize,
         raceCategory: raceCategoryMap[formData.raceCategory] || formData.raceCategory,
         emergencyContactName: formData.emergencyContactName,
@@ -255,21 +241,69 @@ function Home() {
         amount: getRegistrationFee(formData.raceCategory)
       };
 
-      // 1. Create registration on backend (generates Razorpay order)
+      // 1. Create registration on backend
       const registrationResponse = await createRegistration(registrationData);
 
-      const RAZORPAY_KEY_ID = "rzp_test_S35m3ruk7s318p";
-      const amount = registrationResponse.amount || registrationData.amount;
-      const orderId =
-        registrationResponse.razorpayOrderId ||
-        registrationResponse.razorpay_order_id ||
-        registrationResponse.razorpayOrderID;
+      // Use live Razorpay key for production payments
+      const RAZORPAY_KEY_ID = "rzp_live_S9Fa9edqJrAaQs";
 
-      // 2. Open Razorpay Checkout
+      // Backend response shape:
+      // { message: string, data: { id, amount, ... } }
+      const registrationDataFromApi = registrationResponse.data || registrationResponse;
+      const registrationId =
+        registrationDataFromApi.id ||
+        registrationDataFromApi.registrationId ||
+        registrationDataFromApi.userId;
+      // Amount used only to tell backend what fee to charge; source-of-truth for payment is the order API.
+      const registrationAmount = Number(
+        registrationDataFromApi.amount ?? registrationData.amount
+      );
+
+      // 2. Create Razorpay order for this registration
+      const orderResponse = await createPaymentOrder({
+        registrationId,
+        amount: String(registrationAmount),
+      });
+
+      // Extract order details from backend response:
+      // Backend shape: { message, data: { orderId, amount, currency } }
+      const orderPayload = orderResponse.data || orderResponse;
+      const orderData = orderPayload.data || orderPayload;
+      const orderId =
+        orderData.id ||
+        orderData.razorpayOrderId ||
+        orderData.razorpay_order_id ||
+        orderData.orderId;
+      // Amount from order API (paise). If backend doesn't send it, fall back to registrationAmount * 100.
+      const orderAmountPaise =
+        typeof orderData.amount === "number"
+          ? orderData.amount
+          : registrationAmount * 100;
+      const orderCurrency = orderData.currency || "INR";
+      // Amount in rupees for our local tracking (pendingTransaction, UI summaries, etc.)
+      const amount = orderAmountPaise / 100;
+
+      if (!orderId) {
+        console.error("Order ID not found in response:", orderResponse);
+        throw new Error("Failed to create payment order. Please try again.");
+      }
+
+      console.log("Order created successfully. Order ID:", orderId);
+
+      // Store pending transaction locally until payment is completed,
+      // using the amount derived from order API (in rupees)
+      if (registrationId && amount) {
+        localStorage.setItem(
+          "pendingTransaction",
+          JSON.stringify({ registrationId, amount })
+        );
+      }
+
+      // 3. Open Razorpay Checkout using amount & currency returned by backend
       const options = {
         key: RAZORPAY_KEY_ID,
-        amount: amount * 100,
-        currency: "INR",
+        amount: orderAmountPaise,
+        currency: orderCurrency,
         name: "Ayyapanthangal Marathon 2026",
         description: "Registration Fee",
         order_id: orderId,
@@ -278,46 +312,149 @@ function Home() {
           email: formData.email,
           contact: formData.mobileNumber,
         },
+        // Attach registrationId so it is available in Razorpay payment (and webhooks)
+        notes: {
+          registrationId,
+        },
         theme: {
           color: "#FF6B35",
         },
-        handler: async function (response) {
-          try {
-            console.log("Razorpay response:", response);
-            const verifyResponse = await verifyPayment(response);
-
-            setSubmitSuccess(true);
-            setPaymentModalData(verifyResponse);
-            setIsPaymentModalOpen(true);
-
-            // Reset form
-            setFormData({
-              name: "",
-              email: "",
-              gender: "",
-              dateOfBirth: "",
-              age: "",
-              presentAddress: "",
-              state: "",
-              city: "",
-              pinCode: "",
-              mobileNumber: "",
-              medicalHistory: "",
-              tshirtSize: "",
-              raceCategory: "",
-              emergencyContactName: "",
-              emergencyContactMobile: "",
-              waiverConsent: false,
-            });
-          } catch (err) {
-            console.error("Payment verification error:", err);
-            showNotification(
-              err?.message || "Payment verification failed. Please contact support.",
-              "error"
-            );
-          } finally {
+        handler: async function (razorpayResponse) {
+          // Payment completed on Razorpay side
+          console.log("Razorpay payment completed:", razorpayResponse);
+          
+          // Use the order_id from Razorpay response as fallback, but prefer our stored orderId
+          const paymentOrderId = razorpayResponse.razorpay_order_id || orderId;
+          
+          if (!paymentOrderId) {
+            console.error("Order ID is undefined in handler");
             setIsSubmitting(false);
+            showNotification("Payment completed but order ID is missing. Please contact support.", "error");
+            return;
           }
+
+          // 1. Clear pending transaction from local storage
+          localStorage.removeItem("pendingTransaction");
+
+          // 2. Start polling backend for payment confirmation
+          //    Open the printable modal immediately with a processing message
+          setIsCheckingPayment(true);
+          setPaymentModalData({
+            referenceNumber: null,
+            message: "Processing payment... Please do not close or refresh this page.",
+            registrationDetails: null,
+          });
+          setIsPaymentModalOpen(true);
+
+          const maxAttempts = 10;
+          const delayMs = 3000;
+
+          const pollStatus = async (attempt = 0) => {
+            try {
+              console.log(`Polling payment status (attempt ${attempt + 1}/${maxAttempts}) for registrationId:`, registrationId);
+              const statusResponse = await getPaymentStatus(registrationId);
+              const statusData = statusResponse.data || statusResponse;
+              const paymentStatus =
+                statusData.status || statusData.paymentStatus || statusData.payment_status;
+
+              console.log("Payment status check:", paymentStatus, statusData);
+
+              if (paymentStatus === "PAID" || paymentStatus === "SUCCESS") {
+                setIsCheckingPayment(false);
+
+                // Fetch full registration details using registrationId from payment status
+                const regId = statusData.registrationId || registrationId;
+                if (regId) {
+                  try {
+                    const regResponse = await getRegistrationById(regId);
+                    const regData = regResponse.data || regResponse;
+
+                    // Prepare compact printable data (only key details for mail/print)
+                    const printableData = {
+                      referenceNumber:
+                        regData.referenceNumber || regData.ticketId || regData.id || regId,
+                      message: "Payment confirmed successfully!",
+                      registrationDetails: {
+                        name: regData.name,
+                        raceCategory: regData.raceCategory,
+                        amount: regData.amount,
+                        registrationId: regData.id,
+                        createdAt: regData.createdAt,
+                      },
+                    };
+
+                    setPaymentModalData(printableData);
+                    setIsPaymentModalOpen(true);
+                  } catch (regErr) {
+                    console.error("Error fetching registration details:", regErr);
+                    setIsCheckingPayment(false);
+                    setIsSubmitting(false);
+                    showNotification(
+                      "Payment confirmed but could not fetch registration details. Please contact support.",
+                      "error"
+                    );
+                  }
+                } else {
+                  setIsCheckingPayment(false);
+                  setIsSubmitting(false);
+                  showNotification(
+                    "Payment confirmed but registration ID is missing. Please contact support.",
+                    "error"
+                  );
+                }
+
+                // Mark submit success and reset the form
+                setSubmitSuccess(true);
+                setFormData({
+                  name: "",
+                  email: "",
+                  gender: "",
+                  dateOfBirth: "",
+                  age: "",
+                  presentAddress: "",
+                  state: "",
+                  city: "",
+                  pinCode: "",
+                  mobileNumber: "",
+                  medicalHistory: "",
+                  tshirtSize: "",
+                  raceCategory: "",
+                  emergencyContactName: "",
+                  emergencyContactMobile: "",
+                  waiverConsent: false,
+                });
+
+                setIsSubmitting(false);
+              } else if (attempt < maxAttempts - 1) {
+                // Try again after a small delay
+                setTimeout(() => pollStatus(attempt + 1), delayMs);
+              } else {
+                // Max attempts reached
+                setIsCheckingPayment(false);
+                setIsSubmitting(false);
+                showNotification(
+                  "We could not confirm your payment automatically. Please contact support with your payment reference.",
+                  "error"
+                );
+              }
+            } catch (err) {
+              console.error("Error while checking payment status:", err);
+              if (attempt < maxAttempts - 1) {
+                setTimeout(() => pollStatus(attempt + 1), delayMs);
+              } else {
+                setIsCheckingPayment(false);
+                setIsSubmitting(false);
+                showNotification(
+                  err?.message ||
+                    "We could not confirm your payment automatically. Please contact support with your payment reference.",
+                  "error"
+                );
+              }
+            }
+          };
+
+          // Kick off polling
+          pollStatus(0);
         },
         modal: {
           ondismiss: function () {
@@ -835,8 +972,26 @@ function Home() {
 
               {submitSuccess ? (
                 <div className="alert alert-success text-center" role="alert">
-                  <h4 className="alert-heading" style={{ fontSize: "clamp(1.25rem, 3vw, 1.5rem)" }}>Registration Successful!</h4>
-                  <p style={{ fontSize: "clamp(0.9rem, 2vw, 1rem)" }}>Thank you for registering. We will contact you soon with further details.</p>
+                  <h4
+                    className="alert-heading"
+                    style={{ fontSize: "clamp(1.25rem, 3vw, 1.5rem)" }}
+                  >
+                    Registration Successful!
+                  </h4>
+                  <p
+                    style={{ fontSize: "clamp(0.9rem, 2vw, 1rem)" }}
+                    className="mb-3"
+                  >
+                    Thank you for registering. We will contact you soon with further
+                    details.
+                  </p>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() => window.location.reload()}
+                  >
+                    Register Again
+                  </button>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="bg-light p-3 p-md-4 p-lg-5 rounded">
@@ -916,10 +1071,13 @@ function Home() {
                       {errors.dateOfBirth && <div className="invalid-feedback">{errors.dateOfBirth}</div>}
                     </div>
 
-                    {/* Age */}
+                    {/* Age (auto-calculated from Date of Birth) */}
                     <div className="col-12 col-md-6">
                       <label htmlFor="age" className="form-label" style={{ fontSize: "clamp(0.9rem, 2vw, 1rem)" }}>
                         Age <span className="text-danger">*</span>
+                        <span className="text-muted" style={{ fontSize: "0.8rem", marginLeft: "4px" }}>
+                          (auto-calculated from Date of Birth)
+                        </span>
                       </label>
                       <input
                         type="number"
@@ -927,11 +1085,11 @@ function Home() {
                         id="age"
                         name="age"
                         value={formData.age}
-                        onChange={handleChange}
-                        placeholder="Age"
+                        placeholder="Auto-calculated"
                         min="1"
                         max="120"
                         required
+                        readOnly
                       />
                       {errors.age && <div className="invalid-feedback">{errors.age}</div>}
                     </div>
@@ -1286,18 +1444,51 @@ function Home() {
           <div className="payment-modal" ref={invoiceRef}>
             <h4 className="payment-modal-title">Registration Confirmation</h4>
             <p className="payment-modal-message">
-              {paymentModalData.message || "Payment verified and registration confirmed."}
+              {isCheckingPayment
+                ? "Processing payment... Please do not close or refresh this page."
+                : paymentModalData.message || "Payment confirmed successfully!"}
             </p>
             <div className="payment-modal-section">
-              <div><strong>Reference Number:</strong> {paymentModalData.referenceNumber}</div>
-              {paymentModalData.userDetails && (
-                <>
-                  <div><strong>Name:</strong> {paymentModalData.userDetails.name}</div>
-                  <div><strong>Email:</strong> {paymentModalData.userDetails.email}</div>
-                  <div><strong>Mobile:</strong> {paymentModalData.userDetails.mobileNumber}</div>
-                  <div><strong>Category:</strong> {paymentModalData.userDetails.category}</div>
-                  <div><strong>Amount:</strong> ₹{paymentModalData.userDetails.amount}</div>
-                </>
+              <div className="mb-3">
+                <strong>Reference Number:</strong>{" "}
+                {paymentModalData.referenceNumber || "N/A"}
+              </div>
+
+              {paymentModalData.registrationDetails && (
+                <div className="registration-details-section mb-3">
+                  <h5 className="mb-3">Event Details</h5>
+
+                  <div className="mb-2">
+                    <strong>Name:</strong> {paymentModalData.registrationDetails.name}
+                  </div>
+
+                  <div className="mb-2">
+                    <strong>Date:</strong> Sunday, 15 February 2026
+                  </div>
+
+                  <div className="mb-2">
+                    <strong>Venue:</strong> Ayyapanthangal
+                  </div>
+
+                  <div className="mb-2">
+                    <strong>Category:</strong>{" "}
+                    {paymentModalData.registrationDetails.raceCategory}
+                  </div>
+
+                  <div className="mb-2">
+                    <strong>Amount Paid:</strong> ₹
+                    {paymentModalData.registrationDetails.amount}
+                  </div>
+
+                  {paymentModalData.registrationDetails.createdAt && (
+                    <div className="mb-2">
+                      <strong>Registration Date:</strong>{" "}
+                      {new Date(
+                        paymentModalData.registrationDetails.createdAt
+                      ).toLocaleString("en-IN")}
+                    </div>
+                  )}
+                </div>
               )}
             </div>
             <div className="payment-modal-actions">
@@ -1305,6 +1496,7 @@ function Home() {
                 type="button"
                 className="btn btn-primary me-2"
                 onClick={handlePrintInvoice}
+                disabled={isCheckingPayment}
               >
                 Print Invoice
               </button>

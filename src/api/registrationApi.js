@@ -13,10 +13,43 @@ export function createRegistration(payload) {
 }
 
 /**
+ * Create a Razorpay order for a registration.
+ * Expects payload: { registrationId: string, amount: string | number }
+ */
+export function createPaymentOrder(payload) {
+  return apiRequest("/payment/order", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+/**
+ * Get payment status for a registration
+ * @param {string} registrationId - Registration ID from create registration response
+ */
+export function getPaymentStatus(registrationId) {
+  return apiRequest(`/payment/payment-status/${registrationId}`, {
+    method: "GET",
+  });
+}
+
+/**
+ * Get registration by ID (public endpoint)
+ * @param {string} registrationId - Registration ID
+ */
+export function getRegistrationById(registrationId) {
+  return apiRequest(`/registrations/${registrationId}`, {
+    method: "GET",
+  });
+}
+
+/**
  * Verify Razorpay payment and confirm registration.
  * Backend expects snake_case Razorpay fields.
+ * @param {Object} razorpayResponse - Razorpay payment response
+ * @param {string} registrationId - Registration ID to verify
  */
-export function verifyPayment(razorpayResponse) {
+export function verifyPayment(razorpayResponse, registrationId) {
   const payload = {
     razorpay_order_id:
       razorpayResponse.razorpay_order_id || razorpayResponse.razorpayOrderId,
@@ -24,9 +57,15 @@ export function verifyPayment(razorpayResponse) {
       razorpayResponse.razorpay_payment_id || razorpayResponse.razorpayPaymentId,
     razorpay_signature:
       razorpayResponse.razorpay_signature || razorpayResponse.signature,
+    registrationId: registrationId,
   };
 
-  return apiRequest("/payment/verify", {
+  // If registrationId is provided, send it as a query parameter
+  const url = registrationId 
+    ? `/payment/verify?registrationId=${encodeURIComponent(registrationId)}`
+    : "/payment/verify";
+
+  return apiRequest(url, {
     method: "POST",
     body: JSON.stringify(payload),
   });
