@@ -162,6 +162,26 @@ function AdminDashboard() {
     }
   };
 
+  const formatDateForCsv = (dateString) => {
+    if (!dateString) return "N/A";
+    try {
+      const date = new Date(dateString);
+      const day = date.getDate();
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const month = monthNames[date.getMonth()];
+      const year = date.getFullYear();
+      let hours = date.getHours();
+      const minutes = date.getMinutes().toString().padStart(2, "0");
+      const ampm = hours >= 12 ? "pm" : "am";
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      const hoursStr = hours.toString().padStart(2, "0");
+      return `${day} ${month} ${year}, ${hoursStr}:${minutes} ${ampm}`;
+    } catch {
+      return dateString;
+    }
+  };
+
   const formatRaceCategory = (category) => {
     if (!category) return "N/A";
     const map = {
@@ -211,25 +231,64 @@ function AdminDashboard() {
       "Reference Number",
       "Name",
       "Email",
-      "Mobile",
+      "Mobile Number",
+      "Gender",
+      "Date of Birth",
+      "Age",
+      "Present Address",
+      "State",
+      "City",
+      "Pincode",
+      "Medical History",
+      "T-Shirt Size",
       "Race Category",
       "Amount",
       "Payment Status",
+      "Email Sent",
+      "Emergency Contact Name",
+      "Emergency Contact Mobile",
+      "Razorpay Order ID",
+      "Razorpay Payment ID",
+      "Waiver Accepted",
       "Created At",
     ];
+
+    const escapeCsvValue = (value) => {
+      if (value === null || value === undefined) return "";
+      const str = String(value);
+      if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    };
 
     const csvRows = [
       header.join(","),
       ...rows.map((r) =>
         [
-          r.referenceNumber || r.ticketId || "",
-          `"${(r.name || "").replace(/"/g, '""')}"`,
-          `"${(r.email || "").replace(/"/g, '""')}"`,
-          r.mobileNumber || "",
-          formatRaceCategory(r.raceCategory),
-          r.amount ?? "",
-          r.paymentStatus || "",
-          formatDate(r.createdAt),
+          escapeCsvValue(r.referenceNumber || r.ticketId || ""),
+          escapeCsvValue(r.name || ""),
+          escapeCsvValue(r.email || ""),
+          escapeCsvValue(r.mobileNumber || ""),
+          escapeCsvValue(r.gender || ""),
+          escapeCsvValue(formatDateForCsv(r.dateOfBirth)),
+          escapeCsvValue(r.age || ""),
+          escapeCsvValue(r.presentAddress || ""),
+          escapeCsvValue(r.state || ""),
+          escapeCsvValue(r.city || ""),
+          escapeCsvValue(r.pincode || ""),
+          escapeCsvValue(r.medicalHistory || "None"),
+          escapeCsvValue(r.tshirtSize || ""),
+          escapeCsvValue(formatRaceCategory(r.raceCategory)),
+          escapeCsvValue(r.amount ? `₹${r.amount}` : ""),
+          escapeCsvValue(r.paymentStatus || ""),
+          escapeCsvValue(r.emailSent ? "Yes" : "No"),
+          escapeCsvValue(r.emergencyContactName || ""),
+          escapeCsvValue(r.emergencyContactMobile || ""),
+          escapeCsvValue(r.razorpayOrderId || ""),
+          escapeCsvValue(r.razorpayPaymentId || ""),
+          escapeCsvValue(r.waiverAccepted ? "Yes" : "No"),
+          escapeCsvValue(formatDateForCsv(r.createdAt)),
         ].join(",")
       ),
     ];
