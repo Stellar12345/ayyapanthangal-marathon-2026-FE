@@ -1,106 +1,91 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import SmallNavbar from "../components/SmallNavbar";
 
 function EventDetails() {
   const navigate = useNavigate();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   useEffect(() => {
-    // Scroll to top on mount
     window.scrollTo(0, 0);
-
-    // Handle mobile menu icon toggle
-    const navbarCollapse = document.getElementById('navbarCollapse');
-    const handleMenuToggle = () => {
-      if (navbarCollapse) {
-        const isOpen = navbarCollapse.classList.contains('show');
-        setIsMenuOpen(isOpen);
-      }
-    };
-
-    if (navbarCollapse) {
-      navbarCollapse.addEventListener('shown.bs.collapse', handleMenuToggle);
-      navbarCollapse.addEventListener('hidden.bs.collapse', handleMenuToggle);
-      handleMenuToggle();
-    }
-
-    return () => {
-      if (navbarCollapse) {
-        navbarCollapse.removeEventListener('shown.bs.collapse', handleMenuToggle);
-        navbarCollapse.removeEventListener('hidden.bs.collapse', handleMenuToggle);
-      }
-    };
   }, []);
 
 
   return (
     <>
-      {/* Navbar Start */}
-      <nav className="navbar navbar-expand-lg  navbar-dark bg-dark fixed-top shadow-sm px-4 px-lg-5 py-3 py-lg-4" style={{ zIndex: 9999 }}>
-        <Link to="/" className="navbar-brand p-0">
-          <h1 className="text-primary m-0">
-            <i className="fa fa-running me-3" />
-            Marathon 2026
-          </h1>
-        </Link>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarCollapse"
-          aria-expanded={isMenuOpen}
-          aria-label="Toggle navigation"
-        >
-          <span className={isMenuOpen ? "fa fa-times" : "fa fa-bars"} />
-        </button>
-        <div className="collapse navbar-collapse" id="navbarCollapse">
-          <div className="navbar-nav ms-auto py-0 pe-4">
-            <Link to="/" className="nav-item nav-link">
-              Home
-            </Link>
-            <Link to="/event-details" className="nav-item nav-link active">
-              Event Details
-            </Link>
-            <a 
-              href="/#register" 
-              className="nav-item nav-link"
-              onClick={(e) => {
-                e.preventDefault();
-                navigate('/');
-                setTimeout(() => {
-                  const element = document.getElementById('register');
-                  if (element) {
-                    window.scrollTo({ top: element.offsetTop - 80, behavior: 'smooth' });
-                  } else {
-                    // Retry if element not found
-                    setTimeout(() => {
-                      const retryElement = document.getElementById('register');
-                      if (retryElement) {
-                        window.scrollTo({ top: retryElement.offsetTop - 80, behavior: 'smooth' });
-                      }
-                    }, 500);
-                  }
-                }, 300);
-              }}
-            >
-              Register
-            </a>
-            <Link to="/contact" className="nav-item nav-link">
-              Contact
-            </Link>
-          </div>
-        </div>
-      </nav>
-      {/* Navbar End */}
+      <SmallNavbar />
 
-      {/* Event Objectives Start */}
-      <div className="container-fluid py-5  bg-light" style={{ marginTop: "100px", paddingTop: "40px" }}>
+      {/* Event Description Start */}
+      <div className="container-fluid py-5 bg-light" style={{ marginTop: "100px" }}>
         <div className="container-fluid px-4 px-lg-5">
           <div className="text-center wow fadeInUp" data-wow-delay="0.1s">
             <h5 className="section-title ff-secondary text-center text-primary fw-normal">
+              Event Description
+            </h5>
+            <h1 className="mb-5">Key Details</h1>
+          </div>
+          <div className="row g-4">
+            <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+              <div className="service-item rounded pt-3">
+                <div className="p-4">
+                  <i className="fa fa-3x fa-calendar-alt text-primary mb-4" />
+                  <h5>Date</h5>
+                  <p>Sunday, 15 February 2026</p>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.2s">
+              <div className="service-item rounded pt-3">
+                <div className="p-4">
+                  <i className="fa fa-3x fa-clock text-primary mb-4" />
+                  <h5>Assembly Time</h5>
+                  <p>6:00 AM</p>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+              <div className="service-item rounded pt-3">
+                <div className="p-4">
+                  <i className="fa fa-3x fa-map-marker-alt text-primary mb-4" />
+                  <h5>Starting Point</h5>
+                  <p>Porur Lake Area</p>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.4s">
+              <div className="service-item rounded pt-3">
+                <div className="p-4">
+                  <i className="fa fa-3x fa-flag-checkered text-primary mb-4" />
+                  <h5>Finish</h5>
+                  <p>Ayyapanthangal Govt HR Sec School</p>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
+              <div className="service-item rounded pt-3">
+                <div className="p-4">
+                  <i className="fa fa-3x fa-users text-primary mb-4" />
+                  <h5>Bulk Registration</h5>
+                  <p>
+                    For bulk registration contact{" "}
+                    <a href="tel:+919444662322" style={{ textDecoration: "none" }}>
+                      Ramesh +919444662322
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Event Description End */}
+
+      {/* Event Objectives Start */}
+      <div className="container-fluid py-4 bg-light" style={{ paddingTop: "20px" }}>
+        <div className="container-fluid px-4 px-lg-5">
+          <div className="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h1 className="mb-3">Our Mission</h1>
+            <h5 className="section-title ff-secondary text-center text-primary fw-normal mb-5">
               Event Objectives
             </h5>
-            <h1 className="mb-5">Our Mission</h1>
           </div>
           <div className="row g-4">
             <div className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
@@ -327,8 +312,16 @@ function EventDetails() {
                 Sunday, 15 February 2026
               </p>
               <p className="mb-2">
+                <i className="fa fa-clock me-3" />
+                Assembly Time: 6:00 AM
+              </p>
+              <p className="mb-2">
                 <i className="fa fa-map-marker-alt me-3" />
-                Ayyapanthangal
+                Starting Point: Porur Lake Area
+              </p>
+              <p className="mb-2">
+                <i className="fa fa-flag-checkered me-3" />
+                Finish Point: Ayyapanthangal Govt HR Sec School
               </p>
               <p className="mb-2">
                 <i className="fa fa-route me-3" />
@@ -337,6 +330,16 @@ function EventDetails() {
               <p className="mb-2">
                 <i className="fa fa-rupee-sign me-3" />
                 Registration Fee: 1.5 KM - ₹350 | 3 KM - ₹350 | 5 KM - ₹400
+              </p>
+              <p className="mb-2">
+                <i className="fa fa-users me-3" />
+                For bulk registration contact{" "}
+                <a
+                  href="tel:+919444662322"
+                  style={{ color: "#FFD700", textDecoration: "none" }}
+                >
+                  Ramesh +919444662322
+                </a>
               </p>
             </div>
             <div className="col-lg-4 col-md-6">

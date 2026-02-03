@@ -755,6 +755,15 @@ function Home() {
               <Link to="/event-details" className="nav-item nav-link">
                 Event Details
               </Link>
+              <Link to="/gallery" className="nav-item nav-link">
+                Gallery
+              </Link>
+              <Link to="/sponsors" className="nav-item nav-link">
+                Sponsors
+              </Link>
+              <Link to="/chief-guest" className="nav-item nav-link">
+                Chief Guest
+              </Link>
               <a href="#register" className="nav-item nav-link">
                 Register
               </a>
@@ -790,7 +799,60 @@ function Home() {
                 </div>
                 <div className="hero-location-item">
                   <i className="fa fa-map-marker-alt me-2" />
-                  <span>Ayyapanthangal</span>
+                  <div
+                    style={{
+                      display: "inline-block",
+                      padding: "10px 14px",
+                      borderRadius: "14px",
+                      background: "rgba(255, 255, 255, 0.08)",
+                      border: "1px solid rgba(255, 255, 255, 0.2)",
+                      boxShadow: "0 6px 14px rgba(0, 0, 0, 0.25)",
+                    }}
+                  >
+                    <span style={{ display: "block", fontWeight: 800, color: "#ffffff" }}>
+                      Ayyapanthangal
+                    </span>
+                    <span style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "6px" }}>
+                      <span
+                        style={{
+                          fontSize: "0.72rem",
+                          padding: "2px 8px",
+                          borderRadius: "999px",
+                          backgroundColor: "rgba(100, 81, 22, 0.76)",
+                          color: "#ffe08a",
+                          fontWeight: 700,
+                          letterSpacing: "0.3px",
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        <i className="fa fa-play me-1" />
+                        Starting Point
+                      </span>
+                      <span style={{ fontSize: "0.98rem", fontWeight: 900, color: "rgb(196, 0, 0)" }}>
+                        Porur Lake Area
+                      </span>
+                    </span>
+                    <span style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "6px" }}>
+                      <span
+                        style={{
+                          fontSize: "0.72rem",
+                          padding: "2px 8px",
+                          borderRadius: "999px",
+                          backgroundColor: "rgba(100, 81, 22, 0.76)",
+                          color: "#ffe08a",
+                          fontWeight: 700,
+                          letterSpacing: "0.3px",
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        <i className="fa fa-flag-checkered me-1" />
+                        Finish
+                      </span>
+                      <span style={{ fontSize: "0.98rem", fontWeight: 900, color: "rgb(196, 0, 0)" }}>
+                        Ayyapanthangal Govt HR Sec School
+                      </span>
+                    </span>
+                  </div>
                 </div>
               </div>
               

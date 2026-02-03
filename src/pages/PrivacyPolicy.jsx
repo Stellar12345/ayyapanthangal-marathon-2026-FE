@@ -1,93 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import SmallNavbar from "../components/SmallNavbar";
 
 function PrivacyPolicy() {
   const navigate = useNavigate();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   useEffect(() => {
     window.scrollTo(0, 0);
-
-    const navbarCollapse = document.getElementById('navbarCollapse');
-    const handleMenuToggle = () => {
-      if (navbarCollapse) {
-        const isOpen = navbarCollapse.classList.contains('show');
-        setIsMenuOpen(isOpen);
-      }
-    };
-
-    if (navbarCollapse) {
-      navbarCollapse.addEventListener('shown.bs.collapse', handleMenuToggle);
-      navbarCollapse.addEventListener('hidden.bs.collapse', handleMenuToggle);
-      handleMenuToggle();
-    }
-
-    return () => {
-      if (navbarCollapse) {
-        navbarCollapse.removeEventListener('shown.bs.collapse', handleMenuToggle);
-        navbarCollapse.removeEventListener('hidden.bs.collapse', handleMenuToggle);
-      }
-    };
   }, []);
 
   return (
     <>
-      {/* Navbar Start */}
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-sm px-4 px-lg-5 py-3 py-lg-4" style={{ zIndex: 9999 }}>
-        <Link to="/" className="navbar-brand p-0">
-          <h1 className="text-primary m-0">
-            <i className="fa fa-running me-3" />
-            Marathon 2026
-          </h1>
-        </Link>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarCollapse"
-          aria-expanded={isMenuOpen}
-          aria-label="Toggle navigation"
-        >
-          <span className={isMenuOpen ? "fa fa-times" : "fa fa-bars"} />
-        </button>
-        <div className="collapse navbar-collapse" id="navbarCollapse">
-          <div className="navbar-nav ms-auto py-0 pe-4">
-            <Link to="/" className="nav-item nav-link">
-              Home
-            </Link>
-            <Link to="/event-details" className="nav-item nav-link">
-              Event Details
-            </Link>
-            <a 
-              href="/#register" 
-              className="nav-item nav-link"
-              onClick={(e) => {
-                e.preventDefault();
-                navigate('/');
-                setTimeout(() => {
-                  const element = document.getElementById('register');
-                  if (element) {
-                    window.scrollTo({ top: element.offsetTop - 80, behavior: 'smooth' });
-                  } else {
-                    setTimeout(() => {
-                      const retryElement = document.getElementById('register');
-                      if (retryElement) {
-                        window.scrollTo({ top: retryElement.offsetTop - 80, behavior: 'smooth' });
-                      }
-                    }, 500);
-                  }
-                }, 300);
-              }}
-            >
-              Register
-            </a>
-            <Link to="/contact" className="nav-item nav-link">
-              Contact
-            </Link>
-          </div>
-        </div>
-      </nav>
-      {/* Navbar End */}
+      <SmallNavbar />
 
       {/* Privacy Policy Start */}
       <div className="container-fluid py-5" style={{ marginTop: "100px", paddingTop: "40px" }}>

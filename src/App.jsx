@@ -9,6 +9,9 @@ import CancellationRefund from "./pages/CancellationRefund.jsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
 import AdminLogin from "./pages/AdminLogin.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
+import Gallery from "./pages/Gallery.jsx";
+import Sponsors from "./pages/Sponsors.jsx";
+import ChiefGuest from "./pages/ChiefGuest.jsx";
 
 function App() {
   return (
@@ -20,6 +23,9 @@ function App() {
       <Route path="/shipping-policy" element={<ShippingPolicy />} />
       <Route path="/cancellation-refund" element={<CancellationRefund />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      <Route path="/gallery" element={<Gallery />} />
+      <Route path="/sponsors" element={<Sponsors />} />
+      <Route path="/chief-guest" element={<ChiefGuest />} />
       <Route path="/admin" element={<AdminLogin />} />
       <Route path="/admin/dashboard" element={<AdminDashboard />} />
     </Routes>
