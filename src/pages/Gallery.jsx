@@ -39,7 +39,7 @@ function Gallery() {
                   style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
                 />
                 <div style={{ padding: "14px 16px" }}>
-                  <div style={{ fontWeight: 800, fontSize: "1rem", color: "#1f2937" }}>
+                  <div style={{ fontWeight: 800, fontSize: "1rem", color: "#dc3545" }}>
                     Usha Nandhinee
                   </div>
                   <div style={{ fontSize: "0.95rem", color: "#6b7280" }}>
@@ -65,7 +65,7 @@ function Gallery() {
                   style={{ width: "100%", height: "auto", display: "block" }}
                 />
                 <div style={{ padding: "14px 16px" }}>
-                  <div style={{ fontWeight: 800, fontSize: "1rem", color: "#1f2937" }}>
+                  <div style={{ fontWeight: 800, fontSize: "1rem", color: "#dc3545" }}>
                     Jamila Pandurangan
                   </div>
                   <div style={{ fontSize: "0.95rem", color: "#6b7280" }}>
@@ -91,7 +91,7 @@ function Gallery() {
                   style={{ width: "100%", height: "auto", display: "block" }}
                 />
                 <div style={{ padding: "14px 16px" }}>
-                  <div style={{ fontWeight: 800, fontSize: "1rem", color: "#1f2937" }}>
+                  <div style={{ fontWeight: 800, fontSize: "1rem", color: "#dc3545" }}>
                     Arul
                   </div>
                   <div style={{ fontSize: "0.95rem", color: "#6b7280" }}>
@@ -117,7 +117,7 @@ function Gallery() {
                   style={{ width: "100%", height: "auto", display: "block" }}
                 />
                 <div style={{ padding: "14px 16px" }}>
-                  <div style={{ fontWeight: 800, fontSize: "1rem", color: "#1f2937" }}>
+                  <div style={{ fontWeight: 800, fontSize: "1rem", color: "#dc3545" }}>
                     Mrs Lokanayaki Avl
                   </div>
                   <div style={{ fontSize: "0.95rem", color: "#6b7280" }}>
@@ -140,7 +140,7 @@ function Gallery() {
                   style={{ width: "100%", height: "auto", display: "block" }}
                 />
                 <div style={{ padding: "14px 16px" }}>
-                  <div style={{ fontWeight: 800, fontSize: "1rem", color: "#1f2937" }}>
+                  <div style={{ fontWeight: 800, fontSize: "1rem", color: "#dc3545" }}>
                     ANE Bupathi Avargal
                   </div>
                 </div>

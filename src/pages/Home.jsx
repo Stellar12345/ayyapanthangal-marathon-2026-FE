@@ -797,6 +797,10 @@ function Home() {
                   <i className="fa fa-calendar-alt me-2" />
                   <span>15 February 2026</span>
                 </div>
+                <div className="hero-date-item">
+                  <i className="fa fa-clock me-2" />
+                  <span>Assembly Time: 6:00 AM</span>
+                </div>
                 <div className="hero-location-item">
                   <i className="fa fa-map-marker-alt me-2" />
                   <div
@@ -908,10 +912,6 @@ function Home() {
                 </div>
               </div>
               
-              {/* Primary CTA Button */}
-              <a href="#register" className="hero-register-btn">
-                REGISTER NOW
-              </a>
             </div>
             
             {/* Prize Money - Right Side (New Attractive Design) */}
@@ -957,6 +957,9 @@ function Home() {
                     <span style={{ fontWeight: "600" }}>Participation Certificate</span>
                   </div>
                 </div>
+                <a href="#register" className="hero-register-btn" style={{ marginTop: "18px" }}>
+                  REGISTER NOW
+                </a>
               </div>
               <div className="hero-prize-money-shine"></div>
             </div>

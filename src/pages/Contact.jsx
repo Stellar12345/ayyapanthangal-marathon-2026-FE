@@ -49,7 +49,9 @@ function Contact() {
                   </p>
                   <p className="mb-2">
                     <i className="fa fa-map-marker-alt me-2 text-primary"></i>
-                    <strong>Address:</strong> India
+                    <strong>Address:</strong>{" "}
+                    Ramesh Nivash A, Gowri Nivas, Advisor to Govt of Tamil Nadu, No 229 B Maduram Nagar,
+                    Ayyapanthangal, Chennai - 600 056.
                   </p>
                 </div>
 
