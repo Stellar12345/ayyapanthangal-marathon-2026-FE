@@ -25,6 +25,7 @@ function AdminDashboard() {
   const [selectedRegistration, setSelectedRegistration] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [exportAllLoading, setExportAllLoading] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
@@ -216,12 +217,14 @@ function AdminDashboard() {
     );
   };
 
-  const handleExportCsv = () => {
-    const rows =
-      selectedIds.length > 0
-        ? registrations.filter((r) => selectedIds.includes(r.id))
-        : registrations;
+  const getItemsFromResponse = (response) => {
+    const responseData = response.data || response;
+    const container = responseData.data || responseData;
+    const items = container.items || container.results || container.registrations || container;
+    return Array.isArray(items) ? items : [];
+  };
 
+  const exportRowsToCsv = (rows, filename) => {
     if (!rows.length) {
       alert("No registrations to export.");
       return;
@@ -297,9 +300,34 @@ function AdminDashboard() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = "registrations.csv";
+    link.download = filename;
     link.click();
     URL.revokeObjectURL(url);
+  };
+
+  const handleExportCsv = () => {
+    const rows =
+      selectedIds.length > 0
+        ? registrations.filter((r) => selectedIds.includes(r.id))
+        : registrations;
+    exportRowsToCsv(rows, "registrations.csv");
+  };
+
+  const handleExportAll = async () => {
+    try {
+      setExportAllLoading(true);
+      const response = await getRegistrations({ paymentStatus: "PAID", page: 1, limit: 10000 });
+      const rows = getItemsFromResponse(response);
+      if (!rows.length) {
+        alert("No paid registrations to export.");
+        return;
+      }
+      exportRowsToCsv(rows, "registrations-paid-all.csv");
+    } catch (err) {
+      alert(err?.message || "Failed to export registrations.");
+    } finally {
+      setExportAllLoading(false);
+    }
   };
 
   return (
@@ -436,14 +464,24 @@ function AdminDashboard() {
                 </span>
               )}
             </h5>
-            <button
-              type="button"
-              className="btn btn-sm btn-outline-primary"
-              onClick={handleExportCsv}
-              disabled={registrations.length === 0}
-            >
-              Export CSV
-            </button>
+            <div className="d-flex gap-2">
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-success"
+                onClick={handleExportAll}
+                disabled={exportAllLoading}
+              >
+                {exportAllLoading ? "Exporting..." : "Export All"}
+              </button>
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-primary"
+                onClick={handleExportCsv}
+                disabled={registrations.length === 0}
+              >
+                Export CSV
+              </button>
+            </div>
           </div>
           <div className="card-body">
             {registrations.length === 0 ? (
