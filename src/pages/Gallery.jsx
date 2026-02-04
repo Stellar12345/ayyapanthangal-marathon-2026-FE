@@ -145,6 +145,32 @@ function Gallery() {
                   </div>
                 </div>
               </div>
+
+              <div
+                style={{
+                  borderRadius: "16px",
+                  overflow: "hidden",
+                  background: "#ffffff",
+                  boxShadow: "0 10px 24px rgba(0, 0, 0, 0.12)",
+                }}
+              >
+                <img
+                  src="/gallery/WhatsApp Image 2026-02-04 at 5.53.11 AM.jpeg"
+                  alt="Mr. Murugados, Vice president, Ayyapanthangal Panchayat"
+                  style={{ width: "100%", height: "auto", display: "block" }}
+                />
+                <div style={{ padding: "14px 16px" }}>
+                  <div style={{ fontWeight: 800, fontSize: "1rem", color: "#dc3545" }}>
+                    Mr. Murugados
+                  </div>
+                  <div style={{ fontSize: "0.95rem", color: "#6b7280" }}>
+                    Vice president
+                  </div>
+                  <div style={{ marginTop: "6px", fontWeight: 600, color: "#dc3545" }}>
+                    Ayyapanthangal Panchayat
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
