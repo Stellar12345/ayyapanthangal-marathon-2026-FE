@@ -67,7 +67,7 @@ function EventDetails() {
                   <p>
                     For bulk registration contact{" "}
                     <a href="tel:+919444662322" style={{ textDecoration: "none" }}>
-                      Ramesh +919444662322
+                      Ramesh Nivash +919444662322
                     </a>
                   </p>
                 </div>
