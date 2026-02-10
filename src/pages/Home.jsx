@@ -764,16 +764,10 @@ function Home() {
               <Link to="/chief-guest" className="nav-item nav-link">
                 Chief Guest
               </Link>
-              <a href="#register" className="nav-item nav-link">
-                Register
-              </a>
               <Link to="/contact" className="nav-item nav-link">
                 Contact
               </Link>
             </div>
-            <a href="#register" className="btn btn-primary py-2 px-4">
-              Register Now
-            </a>
           </div>
         </nav>
 
@@ -957,9 +951,6 @@ function Home() {
                     <span style={{ fontWeight: "600" }}>Participation Certificate</span>
                   </div>
                 </div>
-                <a href="#register" className="hero-register-btn" style={{ marginTop: "18px" }}>
-                  REGISTER NOW
-                </a>
               </div>
               <div className="hero-prize-money-shine"></div>
             </div>
@@ -1032,374 +1023,36 @@ function Home() {
                 <h5 className="section-title ff-secondary text-center text-primary fw-normal">
                   Registration
                 </h5>
-                <h1 className="mb-3 mb-md-4" style={{ fontSize: "clamp(1.5rem, 4vw, 2.5rem)" }}>Register for Ayyapanthangal Marathon 2026</h1>
-                <p className="lead mb-0" style={{ fontSize: "clamp(1rem, 2.5vw, 1.25rem)" }}>Registration Fee: 1.5 KM - ₹350 | 3 KM - ₹350 | 5 KM - ₹400</p>
+                <h1
+                  className="mb-3 mb-md-4"
+                  style={{ fontSize: "clamp(1.5rem, 4vw, 2.5rem)" }}
+                >
+                  Registration Completed
+                </h1>
+                <p
+                  className="lead mb-0"
+                  style={{ fontSize: "clamp(1rem, 2.5vw, 1.1rem)" }}
+                >
+                  Online registrations for Ayyapanthangal Marathon 2026 are now closed. Please
+                  find the event details below.
+                </p>
               </div>
 
-              {submitSuccess ? (
-                <div className="alert alert-success text-center" role="alert">
-                  <h4
-                    className="alert-heading"
-                    style={{ fontSize: "clamp(1.25rem, 3vw, 1.5rem)" }}
-                  >
-                    Registration Successful!
-                  </h4>
-                  <p
-                    style={{ fontSize: "clamp(0.9rem, 2vw, 1rem)" }}
-                    className="mb-3"
-                  >
-                    Thank you for registering. We will contact you soon with further
-                    details.
+              <div className="bg-light p-3 p-md-4 p-lg-5 rounded">
+                <div className="text-center mb-4">
+                  <h4 className="mb-2">Event Details</h4>
+                  <p className="mb-1"><strong>Date:</strong> Sunday, 15 February 2026</p>
+                  <p className="mb-1"><strong>Venue:</strong> Ayyapanthangal</p>
+                  <p className="mb-1">
+                    <strong>Race Categories:</strong> 1.5 KM | 3 KM | 5 KM
                   </p>
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={() => window.location.reload()}
-                  >
-                    Register Again
-                  </button>
                 </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="bg-light p-3 p-md-4 p-lg-5 rounded">
-                  <div className="row g-3">
-                    {/* Name */}
-                    <div className="col-12 col-md-6">
-                      <label htmlFor="name" className="form-label" style={{ fontSize: "clamp(0.9rem, 2vw, 1rem)" }}>
-                        Name <span className="text-danger">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        className={`form-control ${errors.name ? 'is-invalid' : ''}`}
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        placeholder="Enter your full name"
-                        required
-                      />
-                      {errors.name && <div className="invalid-feedback">{errors.name}</div>}
-                    </div>
-
-                    {/* Email */}
-                    <div className="col-12 col-md-6">
-                      <label htmlFor="email" className="form-label" style={{ fontSize: "clamp(0.9rem, 2vw, 1rem)" }}>
-                        Email <span className="text-danger">*</span>
-                      </label>
-                      <input
-                        type="email"
-                        className={`form-control ${errors.email ? 'is-invalid' : ''}`}
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        placeholder="Enter your email address"
-                        required
-                      />
-                      {errors.email && <div className="invalid-feedback">{errors.email}</div>}
-                    </div>
-
-                    {/* Gender */}
-                    <div className="col-12 col-md-6">
-                      <label htmlFor="gender" className="form-label" style={{ fontSize: "clamp(0.9rem, 2vw, 1rem)" }}>
-                        Gender <span className="text-danger">*</span>
-                      </label>
-                      <select
-                        className={`form-select ${errors.gender ? 'is-invalid' : ''}`}
-                        id="gender"
-                        name="gender"
-                        value={formData.gender}
-                        onChange={handleChange}
-                        required
-                      >
-                        <option value="">Select Gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                      </select>
-                      {errors.gender && <div className="invalid-feedback">{errors.gender}</div>}
-                    </div>
-
-                    {/* Date of Birth */}
-                    <div className="col-12 col-md-6">
-                      <label htmlFor="dateOfBirth" className="form-label" style={{ fontSize: "clamp(0.9rem, 2vw, 1rem)" }}>
-                        Date of Birth <span className="text-danger">*</span>
-                      </label>
-                      <input
-                        type="date"
-                        className={`form-control ${errors.dateOfBirth ? 'is-invalid' : ''}`}
-                        id="dateOfBirth"
-                        name="dateOfBirth"
-                        value={formData.dateOfBirth}
-                        onChange={handleChange}
-                        max={new Date().toISOString().split('T')[0]}
-                        required
-                      />
-                      {errors.dateOfBirth && <div className="invalid-feedback">{errors.dateOfBirth}</div>}
-                    </div>
-
-                    {/* Age (auto-calculated from Date of Birth) */}
-                    <div className="col-12 col-md-6">
-                      <label htmlFor="age" className="form-label" style={{ fontSize: "clamp(0.9rem, 2vw, 1rem)" }}>
-                        Age <span className="text-danger">*</span>
-                        <span className="text-muted" style={{ fontSize: "0.8rem", marginLeft: "4px" }}>
-                          (auto-calculated from Date of Birth)
-                        </span>
-                      </label>
-                      <input
-                        type="number"
-                        className={`form-control ${errors.age ? 'is-invalid' : ''}`}
-                        id="age"
-                        name="age"
-                        value={formData.age}
-                        placeholder="Auto-calculated"
-                        min="1"
-                        max="120"
-                        required
-                        readOnly
-                      />
-                      {errors.age && <div className="invalid-feedback">{errors.age}</div>}
-                    </div>
-
-                    {/* Present Address */}
-                    <div className="col-12">
-                      <label htmlFor="presentAddress" className="form-label" style={{ fontSize: "clamp(0.9rem, 2vw, 1rem)" }}>
-                        Present Address <span className="text-danger">*</span>
-                      </label>
-                      <textarea
-                        className={`form-control ${errors.presentAddress ? 'is-invalid' : ''}`}
-                        id="presentAddress"
-                        name="presentAddress"
-                        value={formData.presentAddress}
-                        onChange={handleChange}
-                        rows="3"
-                        placeholder="Enter your complete address"
-                        required
-                      ></textarea>
-                      {errors.presentAddress && <div className="invalid-feedback">{errors.presentAddress}</div>}
-                    </div>
-
-                    {/* State */}
-                    <div className="col-12 col-md-4">
-                      <label htmlFor="state" className="form-label" style={{ fontSize: "clamp(0.9rem, 2vw, 1rem)" }}>
-                        State <span className="text-danger">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        className={`form-control ${errors.state ? 'is-invalid' : ''}`}
-                        id="state"
-                        name="state"
-                        value={formData.state}
-                        onChange={handleChange}
-                        placeholder="Enter state"
-                        required
-                      />
-                      {errors.state && <div className="invalid-feedback">{errors.state}</div>}
-                    </div>
-
-                    {/* City */}
-                    <div className="col-12 col-md-4">
-                      <label htmlFor="city" className="form-label" style={{ fontSize: "clamp(0.9rem, 2vw, 1rem)" }}>
-                        City <span className="text-danger">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        className={`form-control ${errors.city ? 'is-invalid' : ''}`}
-                        id="city"
-                        name="city"
-                        value={formData.city}
-                        onChange={handleChange}
-                        placeholder="Enter city"
-                        required
-                      />
-                      {errors.city && <div className="invalid-feedback">{errors.city}</div>}
-                    </div>
-
-                    {/* Pin Code */}
-                    <div className="col-12 col-md-4">
-                      <label htmlFor="pinCode" className="form-label" style={{ fontSize: "clamp(0.9rem, 2vw, 1rem)" }}>
-                        Pin Code <span className="text-danger">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        className={`form-control ${errors.pinCode ? 'is-invalid' : ''}`}
-                        id="pinCode"
-                        name="pinCode"
-                        value={formData.pinCode}
-                        onChange={handleChange}
-                        placeholder="Enter 6-digit pin code"
-                        maxLength="6"
-                        pattern="[0-9]{6}"
-                        inputMode="numeric"
-                        required
-                      />
-                      {errors.pinCode && <div className="invalid-feedback">{errors.pinCode}</div>}
-                    </div>
-
-                    {/* Mobile Number */}
-                    <div className="col-12 col-md-6">
-                      <label htmlFor="mobileNumber" className="form-label" style={{ fontSize: "clamp(0.9rem, 2vw, 1rem)" }}>
-                        Mobile Number <span className="text-danger">*</span>
-                      </label>
-                      <input
-                        type="tel"
-                        className={`form-control ${errors.mobileNumber ? 'is-invalid' : ''}`}
-                        id="mobileNumber"
-                        name="mobileNumber"
-                        value={formData.mobileNumber}
-                        onChange={handleChange}
-                        placeholder="10-digit mobile number"
-                        maxLength="10"
-                        pattern="[6-9][0-9]{9}"
-                        required
-                      />
-                      {errors.mobileNumber && <div className="invalid-feedback">{errors.mobileNumber}</div>}
-                    </div>
-
-                    {/* T-shirt Size */}
-                    <div className="col-12 col-md-6">
-                      <label htmlFor="tshirtSize" className="form-label" style={{ fontSize: "clamp(0.9rem, 2vw, 1rem)" }}>
-                        T-shirt Size <span className="text-danger">*</span>
-                      </label>
-                      <select
-                        className={`form-select ${errors.tshirtSize ? 'is-invalid' : ''}`}
-                        id="tshirtSize"
-                        name="tshirtSize"
-                        value={formData.tshirtSize}
-                        onChange={handleChange}
-                        required
-                      >
-                        <option value="">Select T-shirt Size</option>
-                        <option value="XS">XS</option>
-                        <option value="S">S</option>
-                        <option value="M">M</option>
-                        <option value="L">L</option>
-                        <option value="XL">XL</option>
-                        <option value="XXL">XXL</option>
-                        <option value="XXXL">XXXL</option>
-                      </select>
-                      {errors.tshirtSize && <div className="invalid-feedback">{errors.tshirtSize}</div>}
-                    </div>
-
-                    {/* Race Category */}
-                    <div className="col-12 col-md-6">
-                      <label htmlFor="raceCategory" className="form-label" style={{ fontSize: "clamp(0.9rem, 2vw, 1rem)" }}>
-                        Race Category <span className="text-danger">*</span>
-                      </label>
-                      <select
-                        className={`form-select ${errors.raceCategory ? 'is-invalid' : ''}`}
-                        id="raceCategory"
-                        name="raceCategory"
-                        value={formData.raceCategory}
-                        onChange={handleChange}
-                        required
-                      >
-                        <option value="">Select Race Category</option>
-                        <option value="KM_5">5 KM</option>
-                        <option value="KM_3">3 KM</option>
-                        <option value="KM_1_5">1.5 KM</option>
-                      </select>
-                      {errors.raceCategory && <div className="invalid-feedback">{errors.raceCategory}</div>}
-                    </div>
-
-                    {/* Medical History */}
-                    <div className="col-12 col-md-6">
-                      <label htmlFor="medicalHistory" className="form-label" style={{ fontSize: "clamp(0.9rem, 2vw, 1rem)" }}>
-                        Any Medical History
-                      </label>
-                      <textarea
-                        className="form-control"
-                        id="medicalHistory"
-                        name="medicalHistory"
-                        value={formData.medicalHistory}
-                        onChange={handleChange}
-                        rows="3"
-                        placeholder="Please mention any medical conditions, allergies, or health concerns (if any)"
-                      ></textarea>
-                    </div>
-
-                    {/* Emergency Contact Name */}
-                    <div className="col-12 col-md-6">
-                      <label htmlFor="emergencyContactName" className="form-label" style={{ fontSize: "clamp(0.9rem, 2vw, 1rem)" }}>
-                        Emergency Contact Name <span className="text-danger">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        className={`form-control ${errors.emergencyContactName ? 'is-invalid' : ''}`}
-                        id="emergencyContactName"
-                        name="emergencyContactName"
-                        value={formData.emergencyContactName}
-                        onChange={handleChange}
-                        placeholder="Emergency contact person's name"
-                        required
-                      />
-                      {errors.emergencyContactName && <div className="invalid-feedback">{errors.emergencyContactName}</div>}
-                    </div>
-
-                    {/* Emergency Contact Mobile */}
-                    <div className="col-12 col-md-6">
-                      <label htmlFor="emergencyContactMobile" className="form-label" style={{ fontSize: "clamp(0.9rem, 2vw, 1rem)" }}>
-                        Emergency Contact Mobile Number <span className="text-danger">*</span>
-                      </label>
-                      <input
-                        type="tel"
-                        className={`form-control ${errors.emergencyContactMobile ? 'is-invalid' : ''}`}
-                        id="emergencyContactMobile"
-                        name="emergencyContactMobile"
-                        value={formData.emergencyContactMobile}
-                        onChange={handleChange}
-                        placeholder="10-digit mobile number"
-                        maxLength="10"
-                        pattern="[6-9][0-9]{9}"
-                        required
-                      />
-                      {errors.emergencyContactMobile && <div className="invalid-feedback">{errors.emergencyContactMobile}</div>}
-                    </div>
-
-                    {/* Waiver and Consent */}
-                    <div className="col-12">
-                      <div className={`form-check ${errors.waiverConsent ? 'is-invalid' : ''}`}>
-                        <input
-                          className={`form-check-input ${errors.waiverConsent ? 'is-invalid' : ''}`}
-                          type="checkbox"
-                          id="waiverConsent"
-                          name="waiverConsent"
-                          checked={formData.waiverConsent}
-                          onChange={handleChange}
-                          required
-                        />
-                        <label className="form-check-label" htmlFor="waiverConsent" style={{ fontSize: "clamp(0.85rem, 2vw, 0.95rem)" }}>
-                          <span className="text-danger">*</span> I understand, there is associated risk with a marathon and waive the organisers from any liabilities. I have read and agree to the{" "}
-                          <Link to="/terms" target="_blank" className="text-primary fw-bold" style={{ textDecoration: "underline" }}>
-                            Terms and Conditions
-                          </Link>
-                        </label>
-                        {errors.waiverConsent && <div className="invalid-feedback d-block">{errors.waiverConsent}</div>}
-                      </div>
-                    </div>
-
-                    {/* Submit Button */}
-                    <div className="col-12 text-center mt-3 mt-md-4">
-                      <button
-                        type="submit"
-                        className="btn btn-primary btn-lg w-100 w-md-auto px-4 px-md-5 py-2 py-md-3"
-                        style={{ fontSize: "clamp(1rem, 2.5vw, 1.1rem)" }}
-                        disabled={isSubmitting}
-                      >
-                        {isSubmitting ? (
-                          <>
-                            <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                            Processing...
-                          </>
-                        ) : (
-                          formData.raceCategory 
-                            ? `Register & Pay ₹${getRegistrationFee(formData.raceCategory)}`
-                            : "Register & Pay"
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              )}
+                <div className="text-center">
+                  <Link to="/event-details" className="btn btn-primary px-4">
+                    View Full Event Details
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </div>

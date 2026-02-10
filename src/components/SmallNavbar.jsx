@@ -70,22 +70,6 @@ function SmallNavbar() {
           <Link to="/chief-guest" className={linkClass("/chief-guest")}>
             Chief Guest
           </Link>
-          <a
-            href="/#register"
-            className="nav-item nav-link"
-            onClick={(e) => {
-              e.preventDefault();
-              navigate("/");
-              setTimeout(() => {
-                const element = document.getElementById("register");
-                if (element) {
-                  window.scrollTo({ top: element.offsetTop - 80, behavior: "smooth" });
-                }
-              }, 300);
-            }}
-          >
-            Register
-          </a>
           <Link to="/contact" className={linkClass("/contact")}>
             Contact
           </Link>

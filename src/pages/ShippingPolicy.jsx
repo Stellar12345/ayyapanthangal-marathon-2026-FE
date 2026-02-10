@@ -179,21 +179,6 @@ function ShippingPolicy() {
                 <div className="footer-menu">
                   <a href="/#home">Home</a>
                   <Link to="/event-details">Event Details</Link>
-                  <a 
-                    href="/#register"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      navigate('/');
-                      setTimeout(() => {
-                        const element = document.getElementById('register');
-                        if (element) {
-                          window.scrollTo({ top: element.offsetTop - 80, behavior: 'smooth' });
-                        }
-                      }, 100);
-                    }}
-                  >
-                    Register
-                  </a>
                   <Link to="/contact">Contact</Link>
                   <Link to="/terms">Terms & Conditions</Link>
                   <Link to="/shipping-policy">Shipping Policy</Link>

@@ -43,6 +43,31 @@ function Sponsors() {
                     </div>
                   </div>
                 </div>
+
+                <div className="col-12 col-md-6 col-lg-4">
+                  <div
+                    style={{
+                      borderRadius: "16px",
+                      overflow: "hidden",
+                      background: "#ffffff",
+                      boxShadow: "0 10px 24px rgba(0, 0, 0, 0.12)",
+                    }}
+                  >
+                    <img
+                      src="/sponser/WhatsApp Image 2026-02-03 at 4.54.22 PM (1).jpeg"
+                      alt="Hinduja Housing Finance title co-sponsor logo"
+                      style={{ width: "100%", height: "auto", display: "block" }}
+                    />
+                    <div style={{ padding: "14px 16px" }}>
+                      <div style={{ fontWeight: 800, fontSize: "1rem", color: "#1f2937" }}>
+                        Hinduja Housing Finance
+                      </div>
+                      <div style={{ fontSize: "0.95rem", color: "#6b7280" }}>
+                        Title Co-Sponsor
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -100,30 +125,6 @@ function Sponsors() {
                         alt="Sponsor name logo"
                         style={{ width: "100%", height: "auto", display: "block" }}
                       />
-                    </div>
-                  </div>
-                </div>
-                <div className="col-12 col-md-6 col-lg-4">
-                  <div
-                    style={{
-                      borderRadius: "16px",
-                      overflow: "hidden",
-                      background: "#ffffff",
-                      boxShadow: "0 10px 24px rgba(0, 0, 0, 0.12)",
-                    }}
-                  >
-                    <img
-                      src="/sponser/WhatsApp Image 2026-02-03 at 4.54.22 PM (1).jpeg"
-                      alt="Hinduja Housing Finance sponsor logo"
-                      style={{ width: "100%", height: "auto", display: "block" }}
-                    />
-                    <div style={{ padding: "14px 16px" }}>
-                      <div style={{ fontWeight: 800, fontSize: "1rem", color: "#1f2937" }}>
-                        Hinduja Housing Finance
-                      </div>
-                      <div style={{ fontSize: "0.95rem", color: "#6b7280" }}>
-                        Sponsor
-                      </div>
                     </div>
                   </div>
                 </div>
